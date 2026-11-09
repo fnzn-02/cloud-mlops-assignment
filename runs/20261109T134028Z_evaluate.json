@@ -1,0 +1,26 @@
+{
+  "run_id": "20261109T134028Z_evaluate",
+  "stage": "evaluate",
+  "started_at": "2026-11-09T13:40:28.525337+00:00",
+  "finished_at": "2026-11-09T13:40:28.562545+00:00",
+  "status": "success",
+  "git_commit": "e551211",
+  "git_dirty": true,
+  "error": null,
+  "metrics": {
+    "n_test": 8734,
+    "model": {
+      "MAE": 88.7809,
+      "RMSE": 125.2247
+    },
+    "baseline_mean": {
+      "MAE": 168.2519,
+      "RMSE": 227.808
+    },
+    "baseline_hr": {
+      "MAE": 118.1572,
+      "RMSE": 174.2655
+    },
+    "unit": "대/시간"
+  }
+}

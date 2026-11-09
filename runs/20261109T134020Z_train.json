@@ -1,0 +1,26 @@
+{
+  "run_id": "20261109T134020Z_train",
+  "stage": "train",
+  "started_at": "2026-11-09T13:40:20.492965+00:00",
+  "finished_at": "2026-11-09T13:40:20.532536+00:00",
+  "status": "success",
+  "git_commit": "e551211",
+  "git_dirty": true,
+  "error": null,
+  "model_version": "8b6cf2669bbe",
+  "model_path": "data/model.joblib",
+  "n_train": 8645,
+  "features": [
+    "season",
+    "mnth",
+    "hr",
+    "holiday",
+    "weekday",
+    "workingday",
+    "weathersit",
+    "temp",
+    "atemp",
+    "hum",
+    "windspeed"
+  ]
+}

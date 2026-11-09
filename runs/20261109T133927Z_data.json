@@ -1,0 +1,10 @@
+{
+  "run_id": "20261109T133927Z_data",
+  "stage": "data",
+  "started_at": "2026-11-09T13:39:27.735432+00:00",
+  "finished_at": "2026-11-09T13:39:27.768957+00:00",
+  "status": "success",
+  "git_commit": "e551211",
+  "git_dirty": true,
+  "error": null
+}
