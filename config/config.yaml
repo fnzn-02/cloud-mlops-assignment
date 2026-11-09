@@ -1,0 +1,55 @@
+paths:
+  raw_data: data/hour.csv
+  model: data/model.joblib
+  metrics: results/metrics.json
+  runs_dir: runs/
+
+split:
+  train_year: 0   # yr=0 → 2011년 학습용
+  test_year: 1    # yr=1 → 2012년 평가용
+
+features:
+  input:
+    - season
+    - mnth
+    - hr
+    - holiday
+    - weekday
+    - workingday
+    - weathersit
+    - temp
+    - atemp
+    - hum
+    - windspeed
+  target: cnt
+  exclude:               # 누수 방지: 제외 컬럼
+    - instant
+    - dteday
+    - casual
+    - registered
+    - yr                 # yr 포함 여부는 실험 후 결정 (기본: 제외)
+
+validation:
+  hum_min: 0.0
+  hum_max: 1.0
+  temp_min: 0.0
+  temp_max: 1.0
+  windspeed_min: 0.0
+  windspeed_max: 1.0
+
+model:
+  type: RandomForestRegressor
+  params:
+    n_estimators: 200
+    max_depth: null
+    random_state: 42
+    n_jobs: -1
+
+aws:
+  region: ap-northeast-2
+  bucket: ""             # .env의 BUCKET_NAME으로 덮어씀
+  function_name: bike-demand
+  ecr_repo: bike-demand
+  lambda_memory: 1024
+  lambda_timeout: 30
+  lambda_arch: x86_64
