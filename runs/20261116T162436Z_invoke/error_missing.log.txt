@@ -1,0 +1,5 @@
+START RequestId: 5a25c22b-e53d-4be5-9327-122ee42f9eba Version: $LATEST
+[WARNING]	2026-11-16T16:24:38.466Z	5a25c22b-e53d-4be5-9327-122ee42f9eba	입력 검증 실패: ["필수 필드 누락: 'hum'"]
+END RequestId: 5a25c22b-e53d-4be5-9327-122ee42f9eba
+REPORT RequestId: 5a25c22b-e53d-4be5-9327-122ee42f9eba	Duration: 1.79 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 302 MB	
+

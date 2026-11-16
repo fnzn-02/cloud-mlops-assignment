@@ -1,0 +1,10 @@
+$ bash scripts/invoke.sh tests/test_inputs/normal_01.json   # 실패했던 요청 재실행
+==============================
+Lambda 호출 — 함수: bike-demand-2022100185 / 리전: ap-northeast-2 / 입력 1건
+==============================
+❌ normal_01            기대 200 / 실제 none  {'errorType': 'Sandbox.Timedout', 'errorMessage': 'RequestId: 44db582d-2ee7-45c8-bc69-d9964f695f4b Error: Task timed out after 30.00 seconds'}
+
+결과: 0/1 기대와 일치
+[run_log] 기록 저장: runs/20261116T162357Z_invoke.json
+결과 업로드: s3://bike-demand-2022100185/runs/20261116T162357Z_invoke/
+❌ 일부 호출이 기대와 다름 — 다음 처리 중단

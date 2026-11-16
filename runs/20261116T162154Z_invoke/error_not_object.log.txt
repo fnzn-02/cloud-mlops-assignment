@@ -1,0 +1,5 @@
+START RequestId: 90035c76-b731-4a8e-ba28-68038393a2c9 Version: $LATEST
+[WARNING]	2026-11-16T16:21:57.980Z	90035c76-b731-4a8e-ba28-68038393a2c9	입력 검증 실패: ['입력은 JSON 객체여야 함, 받은 타입: list']
+END RequestId: 90035c76-b731-4a8e-ba28-68038393a2c9
+REPORT RequestId: 90035c76-b731-4a8e-ba28-68038393a2c9	Duration: 1.78 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 129 MB	
+

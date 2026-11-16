@@ -1,0 +1,6 @@
+/var/lang/lib/python3.14/site-packages/joblib/_multiprocessing_helpers.py:44: UserWarning: [Errno 2] No such file or directory.  joblib will operate in serial mode
+warnings.warn("%s.  joblib will operate in serial mode" % (e,))
+START RequestId: 44db582d-2ee7-45c8-bc69-d9964f695f4b Version: $LATEST
+END RequestId: 44db582d-2ee7-45c8-bc69-d9964f695f4b
+REPORT RequestId: 44db582d-2ee7-45c8-bc69-d9964f695f4b	Duration: 30000.00 ms	Billed Duration: 37614 ms	Memory Size: 1024 MB	Max Memory Used: 319 MB	Init Duration: 7613.83 ms	Status: timeout
+

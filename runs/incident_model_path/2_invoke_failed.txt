@@ -1,0 +1,21 @@
+$ make invoke
+bash scripts/invoke.sh
+==============================
+Lambda 호출 — 함수: bike-demand-2022100185 / 리전: ap-northeast-2 / 입력 9건
+==============================
+✅ error_extra_field    기대 400 / 실제 400  ["허용되지 않은 필드: ['cnt']"]
+✅ error_float_int      기대 400 / 실제 400  ["타입 오류: 'hr' — int 필요, 받은 값: 17.5"]
+✅ error_missing        기대 400 / 실제 400  ["필수 필드 누락: 'hum'"]
+✅ error_not_object     기대 400 / 실제 400  ['입력은 JSON 객체여야 함, 받은 타입: list']
+✅ error_range          기대 400 / 실제 400  ["범위 오류: 'hum' = 1.5 — 허용 범위 [0.0, 1.0]"]
+✅ error_type           기대 400 / 실제 400  ["타입 오류: 'season' — int 필요, 받은 값: '여름'"]
+❌ normal_01            기대 200 / 실제 500  모델 파일을 찾을 수 없음: /var/task/models/model.joblib (MODEL_PATH 환경변수 확인)
+❌ normal_02            기대 200 / 실제 500  모델 파일을 찾을 수 없음: /var/task/models/model.joblib (MODEL_PATH 환경변수 확인)
+❌ normal_03            기대 200 / 실제 500  모델 파일을 찾을 수 없음: /var/task/models/model.joblib (MODEL_PATH 환경변수 확인)
+
+결과: 6/9 기대와 일치
+[run_log] 기록 저장: runs/20261116T162244Z_invoke.json
+결과 업로드: s3://bike-demand-2022100185/runs/20261116T162244Z_invoke/
+❌ 일부 호출이 기대와 다름 — 다음 처리 중단
+make: *** [invoke] Error 1
+(종료 코드: 2)

@@ -1,0 +1,6 @@
+START RequestId: 585b15ae-c1f5-46b1-a919-64f3cfdc9d79 Version: $LATEST
+[INFO]	2026-11-16T16:22:03.088Z	585b15ae-c1f5-46b1-a919-64f3cfdc9d79	모델 로드 완료 — 버전: f9a91eb09c39, 경로: /var/task/model/model.joblib
+[INFO]	2026-11-16T16:22:03.120Z	585b15ae-c1f5-46b1-a919-64f3cfdc9d79	예측 완료 — run_id: 20261116T162159Z_585b15ae, predicted: 597.83
+END RequestId: 585b15ae-c1f5-46b1-a919-64f3cfdc9d79
+REPORT RequestId: 585b15ae-c1f5-46b1-a919-64f3cfdc9d79	Duration: 4095.18 ms	Billed Duration: 4096 ms	Memory Size: 1024 MB	Max Memory Used: 673 MB	
+

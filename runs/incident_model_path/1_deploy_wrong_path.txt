@@ -1,0 +1,14 @@
+$ LAMBDA_MODEL_PATH=/var/task/models/model.joblib make deploy
+모델 버전: f9a91eb09c39 / Git 커밋: f7697dc / 이미지 태그: f9a91eb09c39-f7697dc
+[1/5 S3 버킷 확인·생성]
+버킷 이미 존재: bike-demand-2022100185
+[2/5 모델 S3 업로드]
+업로드 완료: s3://bike-demand-2022100185/models/f9a91eb09c39/model.joblib
+[3/5 ECR 저장소 확인·생성]
+ECR 저장소 이미 존재: bike-demand-2022100185
+[4/5 이미지 빌드·push]
+push 완료: bike-demand-2022100185:f9a91eb09c39-f7697dc (sha256:65a8bd59ea2c…)
+[5/5 Lambda 배포]
+기존 함수 업데이트...
+[run_log] 기록 저장: runs/20261116T162216Z_deploy.json
+✅ 배포 완료 — Lambda: bike-demand-2022100185 / 모델 버전: f9a91eb09c39 / MODEL_PATH: /var/task/models/model.joblib

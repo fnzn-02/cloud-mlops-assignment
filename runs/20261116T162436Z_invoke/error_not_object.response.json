@@ -1,0 +1,1 @@
+{"statusCode": 400, "errors": ["입력은 JSON 객체여야 함, 받은 타입: list"]}

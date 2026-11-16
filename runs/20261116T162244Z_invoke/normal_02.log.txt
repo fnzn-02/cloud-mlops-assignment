@@ -1,0 +1,5 @@
+START RequestId: b654b2b8-d674-4023-9ca4-191dba27818f Version: $LATEST
+[ERROR]	2026-11-16T16:22:57.637Z	b654b2b8-d674-4023-9ca4-191dba27818f	모델 로드 실패: 모델 파일을 찾을 수 없음: /var/task/models/model.joblib (MODEL_PATH 환경변수 확인)
+END RequestId: b654b2b8-d674-4023-9ca4-191dba27818f
+REPORT RequestId: b654b2b8-d674-4023-9ca4-191dba27818f	Duration: 1.86 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 129 MB	
+

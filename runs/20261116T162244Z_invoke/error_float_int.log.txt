@@ -1,0 +1,5 @@
+START RequestId: 032b6611-7871-42e2-aaeb-f2980bb497a7 Version: $LATEST
+[WARNING]	2026-11-16T16:22:55.503Z	032b6611-7871-42e2-aaeb-f2980bb497a7	입력 검증 실패: ["타입 오류: 'hr' — int 필요, 받은 값: 17.5"]
+END RequestId: 032b6611-7871-42e2-aaeb-f2980bb497a7
+REPORT RequestId: 032b6611-7871-42e2-aaeb-f2980bb497a7	Duration: 1.83 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 129 MB	
+

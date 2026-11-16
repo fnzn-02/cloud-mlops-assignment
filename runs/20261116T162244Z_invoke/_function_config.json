@@ -1,0 +1,8 @@
+{
+    "last_modified": "2026-11-16T16:22:38.000+0000",
+    "code_sha256": "65a8bd59ea2ce51b182eb0ddcae7a04dbe371fbded5985f27612f82d322d502a",
+    "environment": {
+        "MODEL_PATH": "/var/task/models/model.joblib"
+    },
+    "state": "Active"
+}

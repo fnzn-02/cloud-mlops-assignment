@@ -1,0 +1,7 @@
+/var/lang/lib/python3.14/site-packages/joblib/_multiprocessing_helpers.py:44: UserWarning: [Errno 2] No such file or directory.  joblib will operate in serial mode
+warnings.warn("%s.  joblib will operate in serial mode" % (e,))
+START RequestId: 4f4ed6d5-e671-462d-aa91-d145bba58fb1 Version: $LATEST
+[WARNING]	2026-11-16T16:21:56.872Z	4f4ed6d5-e671-462d-aa91-d145bba58fb1	입력 검증 실패: ["허용되지 않은 필드: ['cnt']"]
+END RequestId: 4f4ed6d5-e671-462d-aa91-d145bba58fb1
+REPORT RequestId: 4f4ed6d5-e671-462d-aa91-d145bba58fb1	Duration: 2.41 ms	Billed Duration: 1227 ms	Memory Size: 1024 MB	Max Memory Used: 129 MB	Init Duration: 1224.00 ms	
+

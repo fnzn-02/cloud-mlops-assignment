@@ -1,0 +1,5 @@
+START RequestId: 10a6877a-fcbd-451d-b5d1-d1fcf8da8b46 Version: $LATEST
+[WARNING]	2026-11-16T16:22:56.924Z	10a6877a-fcbd-451d-b5d1-d1fcf8da8b46	입력 검증 실패: ["타입 오류: 'season' — int 필요, 받은 값: '여름'"]
+END RequestId: 10a6877a-fcbd-451d-b5d1-d1fcf8da8b46
+REPORT RequestId: 10a6877a-fcbd-451d-b5d1-d1fcf8da8b46	Duration: 1.82 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 129 MB	
+

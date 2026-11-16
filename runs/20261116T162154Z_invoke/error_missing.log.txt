@@ -1,0 +1,5 @@
+START RequestId: f23a7cac-e860-4245-b35c-bd81f195a2f0 Version: $LATEST
+[WARNING]	2026-11-16T16:21:57.634Z	f23a7cac-e860-4245-b35c-bd81f195a2f0	입력 검증 실패: ["필수 필드 누락: 'hum'"]
+END RequestId: f23a7cac-e860-4245-b35c-bd81f195a2f0
+REPORT RequestId: f23a7cac-e860-4245-b35c-bd81f195a2f0	Duration: 1.89 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 129 MB	
+

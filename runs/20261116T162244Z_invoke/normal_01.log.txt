@@ -1,0 +1,5 @@
+START RequestId: d439e326-ab19-4301-973e-bd2cf3c5915a Version: $LATEST
+[ERROR]	2026-11-16T16:22:57.287Z	d439e326-ab19-4301-973e-bd2cf3c5915a	모델 로드 실패: 모델 파일을 찾을 수 없음: /var/task/models/model.joblib (MODEL_PATH 환경변수 확인)
+END RequestId: d439e326-ab19-4301-973e-bd2cf3c5915a
+REPORT RequestId: d439e326-ab19-4301-973e-bd2cf3c5915a	Duration: 1.82 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 129 MB	
+

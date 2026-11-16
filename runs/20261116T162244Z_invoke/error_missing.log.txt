@@ -1,0 +1,5 @@
+START RequestId: 73c1c92f-65b2-4651-b36e-9d32dde537c7 Version: $LATEST
+[WARNING]	2026-11-16T16:22:55.858Z	73c1c92f-65b2-4651-b36e-9d32dde537c7	입력 검증 실패: ["필수 필드 누락: 'hum'"]
+END RequestId: 73c1c92f-65b2-4651-b36e-9d32dde537c7
+REPORT RequestId: 73c1c92f-65b2-4651-b36e-9d32dde537c7	Duration: 1.89 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 129 MB	
+

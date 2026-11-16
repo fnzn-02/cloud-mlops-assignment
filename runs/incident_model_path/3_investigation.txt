@@ -1,0 +1,30 @@
+## (1) CloudWatch 로그에서 ERROR 검색
+$ aws logs filter-log-events --log-group-name /aws/lambda/bike-demand-2022100185 --filter-pattern ERROR --start-time <15분 전>
+2026-11-16T16:22:57.988Z
+2ce8cbfd-f939-4654-a818-883065c5e700
+모델 로드 실패: 모델 파일을 찾을 수 없음: /var/task/models/model.joblib (MODEL_PATH 환경변수 확인)
+
+## (2) 배포된 함수의 환경변수
+$ aws lambda get-function-configuration --function-name bike-demand-2022100185 --query Environment.Variables
+{
+    "MODEL_PATH": "/var/task/models/model.joblib"
+}
+
+## (3) 배포된 이미지 안의 실제 파일 (ECR에서 받은 같은 digest 이미지)
+배포 이미지 digest: sha256:65a8bd59ea2ce51b182eb0ddcae7a04dbe371fbded5985f27612f82d322d502a
+$ docker run --rm --entrypoint ls <배포 이미지> -la /var/task /var/task/models
+ls: cannot access '/var/task/models': No such file or directory
+/var/task:
+drwxr-xr-x 1 root root 4096 Nov 16 16:21 .
+drwxr-xr-x 1 root root 4096 Nov 16 16:17 ..
+-rw-r--r-- 1 root root 7993 Nov 16 16:20 app.py
+drwxr-xr-x 2 root root 4096 Nov 16 16:17 model
+-rw-r--r-- 1 root root  407 Nov 16 16:15 requirements.txt
+
+/var/task/model:
+drwxr-xr-x 2 root root      4096 Nov 16 16:17 .
+drwxr-xr-x 1 root root      4096 Nov 16 16:21 ..
+-rw-r--r-- 1 root root 148311784 Nov 16 16:03 model.joblib
+
+## (4) S3 모델 보관 경로 (models/ 복수형)
+2026-11-17 01:22:18  148311784 models/f9a91eb09c39/model.joblib

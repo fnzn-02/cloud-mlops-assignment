@@ -1,0 +1,57 @@
+{
+  "run_id": "20261116T162328Z_deploy",
+  "stage": "deploy",
+  "started_at": "2026-11-16T16:23:28+00:00",
+  "finished_at": "2026-11-16T16:23:57.185652+00:00",
+  "status": "success",
+  "git_commit": "f7697dc",
+  "git_dirty": false,
+  "error": null,
+  "input": {
+    "data_path": "data/hour.csv",
+    "data_sha256": "e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f"
+  },
+  "config": {
+    "path": "config/config.yaml",
+    "sha256": "fc91d5418a186b1213b740c3192e881b6555d9b6fa9e3c9032e04a935e03ad37",
+    "split": {
+      "train_year": 0,
+      "test_year": 1
+    },
+    "model": {
+      "type": "RandomForestRegressor",
+      "params": {
+        "n_estimators": 200,
+        "max_depth": null,
+        "random_state": 42,
+        "n_jobs": -1
+      }
+    }
+  },
+  "region": "ap-northeast-2",
+  "model_version": "f9a91eb09c39",
+  "model_s3_uri": "s3://bike-demand-2022100185/models/f9a91eb09c39/model.joblib",
+  "image_tag": "f9a91eb09c39-f7697dc",
+  "image_uri": "<ACCOUNT_ID>.dkr.ecr.ap-northeast-2.amazonaws.com/bike-demand-2022100185@sha256:65a8bd59ea2ce51b182eb0ddcae7a04dbe371fbded5985f27612f82d322d502a",
+  "lambda": {
+    "function_name": "bike-demand-2022100185",
+    "state": "Active",
+    "last_update_status": "Successful",
+    "last_modified": "2026-11-16T16:23:50.000+0000",
+    "code_sha256": "65a8bd59ea2ce51b182eb0ddcae7a04dbe371fbded5985f27612f82d322d502a",
+    "memory_mb": 1024,
+    "timeout_s": 30,
+    "architectures": [
+      "x86_64"
+    ],
+    "package_type": "Image",
+    "role": "arn:aws:iam::<ACCOUNT_ID>:role/yeonsung-lambda-basic-role",
+    "environment": {
+      "MODEL_PATH": "/var/task/model/model.joblib"
+    }
+  },
+  "outputs": [
+    "s3://bike-demand-2022100185/models/f9a91eb09c39/model.joblib",
+    "lambda:bike-demand-2022100185"
+  ]
+}

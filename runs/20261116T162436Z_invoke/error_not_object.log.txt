@@ -1,0 +1,5 @@
+START RequestId: 1a7ca103-11c5-418e-bf18-d445dc072a61 Version: $LATEST
+[WARNING]	2026-11-16T16:24:38.808Z	1a7ca103-11c5-418e-bf18-d445dc072a61	입력 검증 실패: ['입력은 JSON 객체여야 함, 받은 타입: list']
+END RequestId: 1a7ca103-11c5-418e-bf18-d445dc072a61
+REPORT RequestId: 1a7ca103-11c5-418e-bf18-d445dc072a61	Duration: 1.74 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 302 MB	
+

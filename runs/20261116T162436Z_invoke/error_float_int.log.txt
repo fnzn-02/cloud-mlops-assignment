@@ -1,0 +1,5 @@
+START RequestId: a1df9f39-dbac-4bd4-a4d4-94610d382e0a Version: $LATEST
+[WARNING]	2026-11-16T16:24:38.117Z	a1df9f39-dbac-4bd4-a4d4-94610d382e0a	입력 검증 실패: ["타입 오류: 'hr' — int 필요, 받은 값: 17.5"]
+END RequestId: a1df9f39-dbac-4bd4-a4d4-94610d382e0a
+REPORT RequestId: a1df9f39-dbac-4bd4-a4d4-94610d382e0a	Duration: 1.94 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 302 MB	
+

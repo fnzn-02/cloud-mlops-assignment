@@ -1,0 +1,5 @@
+START RequestId: 9d5b0d9d-176c-46a5-9f06-12a9b37e1868 Version: $LATEST
+[WARNING]	2026-11-16T16:24:39.143Z	9d5b0d9d-176c-46a5-9f06-12a9b37e1868	입력 검증 실패: ["범위 오류: 'hum' = 1.5 — 허용 범위 [0.0, 1.0]"]
+END RequestId: 9d5b0d9d-176c-46a5-9f06-12a9b37e1868
+REPORT RequestId: 9d5b0d9d-176c-46a5-9f06-12a9b37e1868	Duration: 1.81 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 302 MB	
+
