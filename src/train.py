@@ -64,8 +64,10 @@ def train(cfg: dict):
         "baseline_mean": baseline_mean,
         "baseline_hr":   baseline_hr,
     }
-    joblib.dump(payload, model_path)
-    log.info("모델 저장: %s", model_path)
+    compress = cfg["model"].get("save_compress", 0)
+    joblib.dump(payload, model_path, compress=compress)
+    log.info("모델 저장: %s (압축 수준 %s, %.1f MB)", model_path, compress,
+             model_path.stat().st_size / 1e6)
 
     version = _model_version(model_path)
     log.info("모델 버전(SHA256[:12]): %s", version)

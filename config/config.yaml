@@ -44,6 +44,9 @@ model:
     max_depth: null
     random_state: 42
     n_jobs: -1
+  # 모델 파일 압축 수준 (joblib). 0이면 148MB → Lambda 콜드 스타트 타임아웃 발생,
+  # 3이면 26MB, 예측 결과 동일 (docs/incident.md 오류 2 참고)
+  save_compress: 3
 
 aws:                     # 참고용 — 실제 값은 .env 에서 읽는다 (scripts/deploy.sh, invoke.sh)
   region: ap-northeast-2

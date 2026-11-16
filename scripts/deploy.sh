@@ -93,11 +93,19 @@ else
 fi
 
 # ── 4. 이미지 빌드·push ───────────────────────────────────────────────────────
-STEP="4/5 이미지 빌드·push"; echo ""; echo "[$STEP]"
+STEP="4/5 이미지 빌드"; echo ""; echo "[4/5 이미지 빌드·검사·push]"
 aws ecr get-login-password --region "$REGION" | \
   docker login --username AWS --password-stdin "$ECR_HOST" >/dev/null
 # Apple Silicon → Lambda(x86_64)용 linux/amd64 로 빌드
 docker build --platform linux/amd64 --provenance=false -f service/Dockerfile -t "${ECR_URI}:${IMAGE_TAG}" .
+# 재발 방지 1: 배포할 MODEL_PATH 가 이미지 안에 실제로 있는지 push 전에 확인 (docs/incident.md 오류 1)
+STEP="4/5 이미지 내 MODEL_PATH 확인"
+docker run --rm --platform linux/amd64 --entrypoint test "${ECR_URI}:${IMAGE_TAG}" -f "$MODEL_PATH_IN_IMAGE" || {
+  echo "MODEL_PATH($MODEL_PATH_IN_IMAGE)가 이미지 안에 없음 — 배포 중단"
+  docker run --rm --platform linux/amd64 --entrypoint find "${ECR_URI}:${IMAGE_TAG}" /var/task -name "*.joblib"
+  false; }
+echo "이미지 내 모델 확인: $MODEL_PATH_IN_IMAGE"
+STEP="4/5 이미지 push"
 docker push "${ECR_URI}:${IMAGE_TAG}" >/dev/null
 IMAGE_DIGEST=$(aws ecr describe-images --repository-name "$ECR_REPO" --region "$REGION" \
   --image-ids imageTag="$IMAGE_TAG" --query 'imageDetails[0].imageDigest' --output text)
@@ -127,6 +135,20 @@ else
   aws lambda wait function-active-v2 --function-name "$FUNCTION" --region "$REGION"
 fi
 
+# 재발 방지 2: 정상 입력 1건을 실제로 호출해 200이 아니면 배포 실패로 기록 (docs/incident.md 오류 1·2)
+#   첫 호출은 콜드 스타트라 시간이 걸리므로 소요 시간도 함께 기록한다
+STEP="배포 후 정상 입력 확인(smoke test)"; echo ""; echo "[$STEP]"
+SMOKE_OUT="$(mktemp)"
+SMOKE_T0=$(date +%s)
+aws lambda invoke --function-name "$FUNCTION" --region "$REGION" \
+  --cli-binary-format raw-in-base64-out --payload fileb://tests/test_inputs/normal_01.json \
+  "$SMOKE_OUT" >/dev/null
+SMOKE_SEC=$(( $(date +%s) - SMOKE_T0 ))
+SMOKE_STATUS=$("$PY" -c 'import json,sys; print(json.load(open(sys.argv[1])).get("statusCode"))' "$SMOKE_OUT" 2>/dev/null || echo none)
+echo "응답: $(cat "$SMOKE_OUT") (${SMOKE_SEC}초)"
+rm -f "$SMOKE_OUT"
+[ "$SMOKE_STATUS" = "200" ] || { echo "정상 입력이 200이 아님 → 배포 실패"; false; }
+
 # 배포된 실제 설정을 조회해 기록 (계정 ID 가림)
 STEP="기록 저장"
 aws lambda get-function-configuration --function-name "$FUNCTION" --region "$REGION" \
@@ -143,6 +165,7 @@ extra = {
     "image_tag":     "${IMAGE_TAG}",
     "image_uri":     "<ACCOUNT_ID>.dkr.ecr.${REGION}.amazonaws.com/${ECR_REPO}@${IMAGE_DIGEST}",
     "lambda":        json.load(open(fn_path)),
+    "smoke_test":    {"input": "tests/test_inputs/normal_01.json", "status": ${SMOKE_STATUS}, "seconds": ${SMOKE_SEC}},
     "outputs":       ["${MODEL_S3_URI}", "lambda:${FUNCTION}"],
 }
 json.dump(extra, open(extra_path, "w"), ensure_ascii=False)
