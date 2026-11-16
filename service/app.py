@@ -43,6 +43,9 @@ import pandas as pd
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
+# Lambda 런타임은 루트 로거를 WARNING으로 미리 설정해 basicConfig가 무시된다.
+# 모델 버전·예측 완료 같은 INFO 로그가 CloudWatch에 남도록 직접 지정한다.
+log.setLevel(logging.INFO)
 
 # ── 필수 입력 필드와 허용 범위 ──────────────────────────────────────────────
 FIELDS = {
