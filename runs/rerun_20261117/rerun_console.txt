@@ -1,0 +1,115 @@
+### 재실행 환경
+일시: 2026-11-16T16:46:41Z (UTC)
+ProductName:		macOS ProductVersion:		26.5.2 BuildVersion:		25F84 
+arm64
+Python 3.14.5
+aws-cli/2.34.48 Python/3.14.5 Darwin/25.5.0 source/arm64
+Docker version 29.1.3, build f52814d
+git version 2.50.1 (Apple Git-155)
+
+### 1. clone (새 폴더)
+$ git clone https://github.com/fnzn-02/cloud-mlops-assignment.git
+커밋: fa1316d docs: 오류 재현·복구 및 클라우드 구성·실행 기록 작성
+
+### 2. 설치 (README 그대로)
+$ python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
+
+joblib==1.5.2
+numpy==2.3.5
+pandas==2.3.3
+PyYAML==6.0.3
+scikit-learn==1.7.2
+scipy==1.16.3
+$ cp .env.example .env
+AWS_PROFILE=mfa
+AWS_REGION=ap-northeast-2
+BUCKET_NAME=bike-demand-<학번>
+FUNCTION_NAME=bike-demand-<학번>
+ECR_REPO_NAME=bike-demand-<학번>
+OWNER_TAG=<학번>
+LAMBDA_ROLE_NAME=yeonsung-lambda-basic-role
+$ sed -i '' 's/<학번>/2022100185/g' .env   # README: BUCKET_NAME 등을 채운다
+
+### 3. 파이프라인
+$ make all
+2026-11-17 01:47:10,765 [INFO] 다운로드 시작: https://archive.ics.uci.edu/static/public/275/bike+sharing+dataset.zip
+2026-11-17 01:47:12,150 [INFO] 다운로드 완료: data/hour.csv
+2026-11-17 01:47:12,151 [INFO] SHA256: e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f
+2026-11-17 01:47:12,170 [INFO] 검증 완료 — 원본 17379행, 제거 0행, 최종 17379행
+2026-11-17 01:47:12,171 [INFO] 학습 데이터: 8645행 (yr=0)
+2026-11-17 01:47:12,171 [INFO] 평가 데이터: 8734행 (yr=1)
+2026-11-17 01:47:12,218 [INFO] === 단계 완료: data ===
+[run_log] 기록 저장: runs/20261116T164700Z_data.json
+2026-11-17 01:47:58,997 [INFO] SHA256: e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f
+2026-11-17 01:47:59,010 [INFO] 검증 완료 — 원본 17379행, 제거 0행, 최종 17379행
+2026-11-17 01:47:59,011 [INFO] 학습 데이터: 8645행 (yr=0)
+2026-11-17 01:47:59,011 [INFO] 평가 데이터: 8734행 (yr=1)
+2026-11-17 01:48:00,451 [INFO] 모델 저장: data/model.joblib (압축 수준 3, 26.1 MB)
+2026-11-17 01:48:00,461 [INFO] 모델 버전(SHA256[:12]): 0e16c92e1dd6
+2026-11-17 01:48:00,496 [INFO] === 단계 완료: train ===
+[run_log] 기록 저장: runs/20261116T164712Z_train.json
+2026-11-17 01:48:00,807 [INFO] SHA256: e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f
+2026-11-17 01:48:00,817 [INFO] 검증 완료 — 원본 17379행, 제거 0행, 최종 17379행
+2026-11-17 01:48:00,817 [INFO] 학습 데이터: 8645행 (yr=0)
+2026-11-17 01:48:00,817 [INFO] 평가 데이터: 8734행 (yr=1)
+2026-11-17 01:48:01,661 [INFO] 모델        — MAE: 88.78, RMSE: 125.22
+2026-11-17 01:48:01,661 [INFO] 베이스라인(평균) — MAE: 168.25, RMSE: 227.81
+2026-11-17 01:48:01,661 [INFO] 베이스라인(hr별)  — MAE: 118.16, RMSE: 174.27
+2026-11-17 01:48:01,713 [INFO] === 단계 완료: evaluate ===
+[run_log] 기록 저장: runs/20261116T164800Z_evaluate.json
+
+$ make test
+✅ [정상 입력 01]
+✅ [정상 입력 02]
+✅ [정상 입력 03]
+✅ [오류: 필드 누락]
+✅ [오류: 범위 초과]
+✅ [오류: 타입 오류]
+✅ [오류: 정수 필드에 소수]
+✅ [오류: 정답 필드 포함]
+✅ [오류: 객체가 아닌 입력]
+결과: 9개 통과 / 0개 실패
+
+### 결과 비교 (원본 저장소에 커밋된 값과 diff)
+results/metrics.json 동일
+results/error_analysis.md 동일
+재실행 모델 SHA256[:12]: 0e16c92e1dd6
+
+### 4. 클라우드 배포·호출 (새 폴더의 코드와 모델로)
+※ README에 MFA 단계가 없음 — 같은 날 발급해 둔 mfa 프로필(만료 전)을 사용
+$ make deploy
+모델 버전: 0e16c92e1dd6 / Git 커밋: fa1316d / 이미지 태그: 0e16c92e1dd6-fa1316d
+[1/5 S3 버킷 확인·생성]
+버킷 이미 존재: bike-demand-2022100185
+[2/5 모델 S3 업로드]
+업로드 완료: s3://bike-demand-2022100185/models/0e16c92e1dd6/model.joblib
+[3/5 ECR 저장소 확인·생성]
+ECR 저장소 이미 존재: bike-demand-2022100185
+[4/5 이미지 빌드·검사·push]
+이미지 내 모델 확인: /var/task/model/model.joblib
+push 완료: bike-demand-2022100185:0e16c92e1dd6-fa1316d (sha256:2c1395075792…)
+[5/5 Lambda 배포]
+기존 함수 업데이트...
+[배포 후 정상 입력 확인(smoke test)]
+응답: {"statusCode": 200, "run_id": "20261116T164842Z_c65723f8", "request_id": "c65723f8-bb6a-4c97-900d-29b7b28b84ba", "predicted_cnt": 597.83, "unit": "대/시간", "model_version": "0e16c92e1dd6", "input": {"season": 2, "mnth": 6, "hr": 17, "holiday": 0, "weekday": 3, "workingday": 1, "weathersit": 1, "temp": 0.72, "atemp": 0.6515, "hum": 0.42, "windspeed": 0.1642}} (5초)
+[run_log] 기록 저장: runs/20261116T164813Z_deploy.json
+✅ 배포 완료 — Lambda: bike-demand-2022100185 / 모델 버전: 0e16c92e1dd6 / MODEL_PATH: /var/task/model/model.joblib
+
+$ make invoke
+bash scripts/invoke.sh
+==============================
+Lambda 호출 — 함수: bike-demand-2022100185 / 리전: ap-northeast-2 / 입력 9건
+==============================
+✅ error_extra_field    기대 400 / 실제 400  ["허용되지 않은 필드: ['cnt']"]
+✅ error_float_int      기대 400 / 실제 400  ["타입 오류: 'hr' — int 필요, 받은 값: 17.5"]
+✅ error_missing        기대 400 / 실제 400  ["필수 필드 누락: 'hum'"]
+✅ error_not_object     기대 400 / 실제 400  ['입력은 JSON 객체여야 함, 받은 타입: list']
+✅ error_range          기대 400 / 실제 400  ["범위 오류: 'hum' = 1.5 — 허용 범위 [0.0, 1.0]"]
+✅ error_type           기대 400 / 실제 400  ["타입 오류: 'season' — int 필요, 받은 값: '여름'"]
+✅ normal_01            기대 200 / 실제 200  597.83
+✅ normal_02            기대 200 / 실제 200  358.09
+✅ normal_03            기대 200 / 실제 200  155.19
+
+결과: 9/9 기대와 일치
+[run_log] 기록 저장: runs/20261116T164846Z_invoke.json
+결과 업로드: s3://bike-demand-2022100185/runs/20261116T164846Z_invoke/

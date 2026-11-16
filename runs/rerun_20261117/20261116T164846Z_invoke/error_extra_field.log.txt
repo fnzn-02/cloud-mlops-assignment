@@ -1,0 +1,5 @@
+START RequestId: 49a5366c-27cc-4775-88fb-c13f1bd460e5 Version: $LATEST
+[WARNING]	2026-11-16T16:48:47.235Z	49a5366c-27cc-4775-88fb-c13f1bd460e5	입력 검증 실패: ["허용되지 않은 필드: ['cnt']"]
+END RequestId: 49a5366c-27cc-4775-88fb-c13f1bd460e5
+REPORT RequestId: 49a5366c-27cc-4775-88fb-c13f1bd460e5	Duration: 1.91 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 558 MB	
+

@@ -1,0 +1,5 @@
+START RequestId: 7358b828-5031-4003-a37b-3533041ad73d Version: $LATEST
+[WARNING]	2026-11-16T16:48:47.636Z	7358b828-5031-4003-a37b-3533041ad73d	입력 검증 실패: ["타입 오류: 'hr' — int 필요, 받은 값: 17.5"]
+END RequestId: 7358b828-5031-4003-a37b-3533041ad73d
+REPORT RequestId: 7358b828-5031-4003-a37b-3533041ad73d	Duration: 1.85 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 558 MB	
+

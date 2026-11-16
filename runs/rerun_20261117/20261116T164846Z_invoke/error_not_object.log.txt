@@ -1,0 +1,5 @@
+START RequestId: 99c97a39-3553-4926-a9d6-2674e3d8c513 Version: $LATEST
+[WARNING]	2026-11-16T16:48:48.457Z	99c97a39-3553-4926-a9d6-2674e3d8c513	입력 검증 실패: ['입력은 JSON 객체여야 함, 받은 타입: list']
+END RequestId: 99c97a39-3553-4926-a9d6-2674e3d8c513
+REPORT RequestId: 99c97a39-3553-4926-a9d6-2674e3d8c513	Duration: 1.75 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 558 MB	
+

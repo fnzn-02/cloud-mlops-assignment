@@ -1,0 +1,1 @@
+{"statusCode": 200, "run_id": "20261116T164850Z_d6405cd0", "request_id": "d6405cd0-3ee1-439d-8c8e-ef28457e799f", "predicted_cnt": 358.09, "unit": "대/시간", "model_version": "0e16c92e1dd6", "input": {"season": 4, "mnth": 12, "hr": 8, "holiday": 0, "weekday": 1, "workingday": 1, "weathersit": 2, "temp": 0.24, "atemp": 0.2273, "hum": 0.75, "windspeed": 0.0896}}

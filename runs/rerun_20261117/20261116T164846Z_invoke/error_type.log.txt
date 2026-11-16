@@ -1,0 +1,5 @@
+START RequestId: 7320fba4-642b-4caf-8ada-3b493637548b Version: $LATEST
+[WARNING]	2026-11-16T16:48:49.274Z	7320fba4-642b-4caf-8ada-3b493637548b	입력 검증 실패: ["타입 오류: 'season' — int 필요, 받은 값: '여름'"]
+END RequestId: 7320fba4-642b-4caf-8ada-3b493637548b
+REPORT RequestId: 7320fba4-642b-4caf-8ada-3b493637548b	Duration: 1.76 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 558 MB	
+

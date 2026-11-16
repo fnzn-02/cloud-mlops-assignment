@@ -1,0 +1,5 @@
+START RequestId: a6ebc365-e0a9-416c-a506-984098093e0f Version: $LATEST
+[INFO]	2026-11-16T16:48:50.589Z	a6ebc365-e0a9-416c-a506-984098093e0f	예측 완료 — run_id: 20261116T164850Z_a6ebc365, predicted: 155.19
+END RequestId: a6ebc365-e0a9-416c-a506-984098093e0f
+REPORT RequestId: a6ebc365-e0a9-416c-a506-984098093e0f	Duration: 12.68 ms	Billed Duration: 13 ms	Memory Size: 1024 MB	Max Memory Used: 558 MB	
+

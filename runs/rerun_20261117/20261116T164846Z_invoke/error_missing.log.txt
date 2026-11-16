@@ -1,0 +1,5 @@
+START RequestId: 274ad23e-ad08-43ef-ae46-feacc41fb51b Version: $LATEST
+[WARNING]	2026-11-16T16:48:48.038Z	274ad23e-ad08-43ef-ae46-feacc41fb51b	입력 검증 실패: ["필수 필드 누락: 'hum'"]
+END RequestId: 274ad23e-ad08-43ef-ae46-feacc41fb51b
+REPORT RequestId: 274ad23e-ad08-43ef-ae46-feacc41fb51b	Duration: 1.69 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 558 MB	
+
