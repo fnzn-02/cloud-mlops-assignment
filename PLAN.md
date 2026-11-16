@@ -70,6 +70,7 @@ cloud-mlops-assignment/
 ├── requirements.txt       ✅ 완성 (버전 고정)
 ├── .gitignore             ✅ 완성
 ├── .env.example           ✅ 완성
+├── .env                   ✅ 로컬에만 존재 (Git 제외), BUCKET_NAME=bike-demand-2022100185, REGION=ap-northeast-2
 ├── config/config.yaml     ✅ 완성
 ├── src/
 │   ├── data.py            ✅ 완성 (다운로드, SHA256, 검증, 분할)
@@ -78,19 +79,25 @@ cloud-mlops-assignment/
 │   ├── run_log.py         ✅ 완성 (실행 기록 공통 함수)
 │   └── pipeline.py        ✅ 완성 (단계별 실행, 실패 시 중단)
 ├── service/
-│   ├── app.py             ❌ 미완성 ← 다음 작업
-│   └── Dockerfile         ❌ 미완성 ← 다음 작업
+│   ├── app.py             ✅ 완성 (Lambda 핸들러, 입력 검증, S3 결과 저장)
+│   └── Dockerfile         ✅ 완성 (linux/amd64, python:3.11)
 ├── scripts/
-│   ├── deploy.sh          ❌ 미완성
+│   ├── deploy.sh          ✅ 완성 (S3→ECR→Lambda 배포) ← AWS 권한 문제로 실행 보류
 │   ├── invoke.sh          ❌ 미완성
 │   └── cleanup.sh         ❌ 미완성
 ├── tests/
-│   ├── test_inputs/       ❌ 미완성
-│   └── test_service.py    ❌ 미완성
+│   ├── test_inputs/
+│   │   ├── normal_01.json ✅ 정상 입력 (여름 오후 5시)
+│   │   ├── normal_02.json ✅ 정상 입력 (겨울 출근)
+│   │   ├── normal_03.json ✅ 정상 입력 (봄 공휴일 낮)
+│   │   ├── error_missing.json ✅ hum 필드 누락
+│   │   ├── error_range.json   ✅ hum=1.5 범위 초과
+│   │   └── error_type.json    ✅ season="여름" 타입 오류
+│   └── test_service.py    ✅ 완성 — 로컬 테스트 6/6 통과
 ├── results/
 │   ├── metrics.json       ✅ 자동 생성됨
-│   └── error_analysis.md  ✅ 자동 생성됨
-├── runs/                  ✅ 자동 생성 중 (data/train/evaluate 기록 있음)
+│   └── error_analysis.md  ✅ 완성 (원인 상세 분석 포함)
+├── runs/                  ✅ data/train/evaluate 기록 있음
 └── docs/
     ├── data.md            ✅ 완성
     ├── cloud.md           ❌ 미완성
@@ -99,7 +106,7 @@ cloud-mlops-assignment/
     └── cost_and_cleanup.md ❌ 미완성
 ```
 
-## 6. 실행 결과 (오늘 완료)
+## 6. 실행 결과 (완료)
 ```
 데이터: 17,379행, 결측치/이상값 0건, SHA256: e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f
 모델 버전: 8b6cf2669bbe
@@ -108,7 +115,19 @@ cloud-mlops-assignment/
   모델 (RandomForest)   — MAE: 88.78,  RMSE: 125.22  ✅ 최고
   베이스라인 (hr별 평균) — MAE: 118.16, RMSE: 174.27
   베이스라인 (전체 평균) — MAE: 168.25, RMSE: 227.81
+
+로컬 Lambda 핸들러 테스트: 6/6 통과
+  정상 입력 3건 → 200 + 예측값 반환 ✅
+  비정상 입력 3건(누락/범위/타입) → 400 + 에러 메시지 ✅
 ```
+
+## ⚠️ 현재 블로커: AWS 권한 문제
+- 학교 IAM 계정(2022100185)에 `StudentSelfManagement` 정책이 있어 S3/Lambda/ECR/EC2 전부 차단됨
+- `s3:CreateBucket`, `lambda:ListFunctions`, `ecr:DescribeRepositories` 모두 AccessDenied
+- **해결 방법 선택 필요**:
+  1. **교수님한테 권한 요청** (추천): S3, ECR, Lambda, CloudWatch 권한 요청
+  2. **개인 AWS 계정 사용**: aws configure 로 개인 계정 키로 교체 후 배포 진행
+- 권한 문제 해결되면 `bash scripts/deploy.sh` 한 번에 배포 완료됨 (스크립트 완성됨)
 
 ## 7. 앞으로 해야 할 작업 (우선순위 순)
 
@@ -222,9 +241,11 @@ git branch
 - [x] 3. 데이터: 다운로드, SHA256 확인, 검증(이상값 0건), 분할, `docs/data.md`
 - [x] 4. 학습과 평가: RandomForest vs 베이스라인, `results/metrics.json`, 오답 분석
 - [x] 5. 실행 기록: `run_log.py`, `pipeline.py` (실패 시 중단), `runs/*.json` 자동 생성
-- [ ] 6. 서비스: Lambda handler (`service/app.py`), 입력 검증, 로컬 테스트
-- [ ] 7. 클라우드 배포: S3 업로드, ECR push, Lambda 생성, 실제 호출, `docs/cloud.md`
-- [ ] 8. 오류 재현과 복구: `docs/incident.md`, `scripts/invoke.sh`
+- [x] 6. 서비스: `service/app.py` ✅, `service/Dockerfile` ✅, 로컬 테스트 6/6 통과 ✅
+- [ ] 7. 클라우드 배포: ⚠️ AWS 권한 문제 해결 후 `bash scripts/deploy.sh` 실행
+       → 해결 시: S3 업로드, ECR push, Lambda 생성, 실제 호출, `docs/cloud.md` 작성
+- [ ] 8. 오류 재현과 복구: `docs/incident.md`, `scripts/invoke.sh` 작성
+       → 시나리오: MODEL_S3_URI를 잘못된 경로로 설정 → 실패 확인 → 수정 → 재실행
 - [ ] 9. 새 폴더 재실행: clone → README대로 실행 → `docs/rerun.md`
 - [ ] 10. 자원 정리: `scripts/cleanup.sh`, `docs/cost_and_cleanup.md`
 - [ ] 11. 최종 점검: 비밀 값 검색, 로그아웃 상태에서 저장소 확인, main 브랜치 확인
