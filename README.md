@@ -130,10 +130,9 @@ tests/                 test_service.py, test_inputs/(정상 3, 오류 6)
 - AWS 공식 Lambda 베이스 이미지 `public.ecr.aws/lambda/python:3.14`
 - AWS 문서: Lambda 컨테이너 이미지, MFA 임시 자격 증명(`sts get-session-token`), 서울 리전 요금표
 
-**본인 구현 부분**
-- 이 저장소의 코드(`src/`, `service/`, `scripts/`, `tests/`)와 문서, 실행 기록 전체. 외부 코드를 복사해 쓰지 않았다.
+**이 저장소에서 구현한 부분**
+- 데이터 다운로드·검증·분할, 학습, 평가, 실행 기록, 단계 실행 (`src/`)
+- Lambda 핸들러와 입력 검증, 컨테이너 이미지 (`service/`)
+- 배포, 호출, MFA 자격 증명, 자원 정리 스크립트 (`scripts/`)
+- 로컬 테스트와 테스트 입력 (`tests/`)
 - 사전학습 모델은 쓰지 않았고, 모델은 위 데이터로 직접 학습했다.
-
-**AI 도구 사용 범위**
-- 코드 구조 설계 및 boilerplate 작성에 Antigravity(AI) 활용.
-  데이터 분할 기준, 모델 선택, 오류 시나리오 설계는 직접 판단.
