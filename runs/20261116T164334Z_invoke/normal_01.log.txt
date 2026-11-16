@@ -1,0 +1,6 @@
+START RequestId: febcfc32-2755-46cb-ab96-cb5f46c12bbb Version: $LATEST
+[INFO]	2026-11-16T16:43:42.084Z	febcfc32-2755-46cb-ab96-cb5f46c12bbb	모델 로드 완료 — 버전: 0e16c92e1dd6, 경로: /var/task/model/model.joblib
+[INFO]	2026-11-16T16:43:42.111Z	febcfc32-2755-46cb-ab96-cb5f46c12bbb	예측 완료 — run_id: 20261116T164338Z_febcfc32, predicted: 597.83
+END RequestId: febcfc32-2755-46cb-ab96-cb5f46c12bbb
+REPORT RequestId: febcfc32-2755-46cb-ab96-cb5f46c12bbb	Duration: 3345.51 ms	Billed Duration: 3346 ms	Memory Size: 1024 MB	Max Memory Used: 558 MB	
+

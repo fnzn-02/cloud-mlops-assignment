@@ -1,0 +1,5 @@
+START RequestId: d0489952-f638-46c8-9d10-65ff8c630920 Version: $LATEST
+[WARNING]	2026-11-16T16:43:37.724Z	d0489952-f638-46c8-9d10-65ff8c630920	입력 검증 실패: ['입력은 JSON 객체여야 함, 받은 타입: list']
+END RequestId: d0489952-f638-46c8-9d10-65ff8c630920
+REPORT RequestId: d0489952-f638-46c8-9d10-65ff8c630920	Duration: 1.78 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 129 MB	
+

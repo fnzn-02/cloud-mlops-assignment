@@ -1,0 +1,5 @@
+START RequestId: c2c66b50-cfda-4f4b-9fc3-2c7e3f4f2085 Version: $LATEST
+[WARNING]	2026-11-16T16:43:38.437Z	c2c66b50-cfda-4f4b-9fc3-2c7e3f4f2085	입력 검증 실패: ["타입 오류: 'season' — int 필요, 받은 값: '여름'"]
+END RequestId: c2c66b50-cfda-4f4b-9fc3-2c7e3f4f2085
+REPORT RequestId: c2c66b50-cfda-4f4b-9fc3-2c7e3f4f2085	Duration: 1.77 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 129 MB	
+

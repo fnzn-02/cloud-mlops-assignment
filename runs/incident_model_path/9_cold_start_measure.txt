@@ -1,0 +1,8 @@
+콜드 스타트 측정 — 압축 모델(26MB, 버전 0e16c92e1dd6), 메모리 1024MB, 타임아웃 30초
+방법: 함수 description 변경으로 새 실행 환경을 강제한 뒤 normal_01 호출, CloudWatch REPORT 줄 확인
+#1 상태 200 / 전체 5초 / Duration: 3570.47 ms Duration: 4367 ms Init Duration: 795.74 ms 
+#2 상태 200 / 전체 4초 / Duration: 3204.65 ms Duration: 3990 ms Init Duration: 784.84 ms 
+#3 상태 200 / 전체 5초 / Duration: 3840.52 ms Duration: 4591 ms Init Duration: 749.63 ms 
+#4 상태 200 / 전체 7초 / Duration: 3257.75 ms Duration: 5655 ms Init Duration: 2396.98 ms 
+#5 상태 200 / 전체 5초 / Duration: 3339.53 ms Duration: 4263 ms Init Duration: 922.63 ms 
+(측정 후 description 원래대로 비움)

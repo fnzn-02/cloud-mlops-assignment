@@ -1,0 +1,5 @@
+START RequestId: 0f3044a9-ebfb-43fa-ac61-1041744dcf5d Version: $LATEST
+[WARNING]	2026-11-16T16:43:37.374Z	0f3044a9-ebfb-43fa-ac61-1041744dcf5d	입력 검증 실패: ["필수 필드 누락: 'hum'"]
+END RequestId: 0f3044a9-ebfb-43fa-ac61-1041744dcf5d
+REPORT RequestId: 0f3044a9-ebfb-43fa-ac61-1041744dcf5d	Duration: 1.70 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 129 MB	
+

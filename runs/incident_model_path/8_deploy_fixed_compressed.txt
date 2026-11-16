@@ -1,0 +1,17 @@
+$ make deploy   # 압축 모델 + 재발 방지 검사 포함
+모델 버전: 0e16c92e1dd6 / Git 커밋: db5a898 / 이미지 태그: 0e16c92e1dd6-db5a898
+[1/5 S3 버킷 확인·생성]
+버킷 이미 존재: bike-demand-2022100185
+[2/5 모델 S3 업로드]
+업로드 완료: s3://bike-demand-2022100185/models/0e16c92e1dd6/model.joblib
+[3/5 ECR 저장소 확인·생성]
+ECR 저장소 이미 존재: bike-demand-2022100185
+[4/5 이미지 빌드·검사·push]
+이미지 내 모델 확인: /var/task/model/model.joblib
+push 완료: bike-demand-2022100185:0e16c92e1dd6-db5a898 (sha256:2c1395075792…)
+[5/5 Lambda 배포]
+기존 함수 업데이트...
+[배포 후 정상 입력 확인(smoke test)]
+응답: {"statusCode": 200, "run_id": "20261116T164206Z_c96ca800", "request_id": "c96ca800-e304-4315-8b26-3e5fa29e7d8c", "predicted_cnt": 597.83, "unit": "대/시간", "model_version": "0e16c92e1dd6", "input": {"season": 2, "mnth": 6, "hr": 17, "holiday": 0, "weekday": 3, "workingday": 1, "weathersit": 1, "temp": 0.72, "atemp": 0.6515, "hum": 0.42, "windspeed": 0.1642}} (7초)
+[run_log] 기록 저장: runs/20261116T164136Z_deploy.json
+✅ 배포 완료 — Lambda: bike-demand-2022100185 / 모델 버전: 0e16c92e1dd6 / MODEL_PATH: /var/task/model/model.joblib

@@ -1,0 +1,149 @@
+{
+  "run_id": "20261116T164334Z_invoke",
+  "stage": "invoke",
+  "started_at": "2026-11-16T16:43:34+00:00",
+  "finished_at": "2026-11-16T16:43:43.035760+00:00",
+  "status": "success",
+  "git_commit": "db5a898",
+  "git_dirty": false,
+  "error": null,
+  "input": {
+    "data_path": "data/hour.csv",
+    "data_sha256": "e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f"
+  },
+  "config": {
+    "path": "config/config.yaml",
+    "sha256": "b15edcbf75af6746c2c95726bfd466bf4dc693c99ba4069464e1e13d4e247676",
+    "split": {
+      "train_year": 0,
+      "test_year": 1
+    },
+    "model": {
+      "type": "RandomForestRegressor",
+      "params": {
+        "n_estimators": 200,
+        "max_depth": null,
+        "random_state": 42,
+        "n_jobs": -1
+      },
+      "save_compress": 3
+    }
+  },
+  "function_name": "bike-demand-2022100185",
+  "region": "ap-northeast-2",
+  "function_config": {
+    "last_modified": "2026-11-16T16:43:22.000+0000",
+    "code_sha256": "2c1395075792c084f927730181ff24c4488a2efec1328f8242e0f4fbdcb1375c",
+    "environment": {
+      "MODEL_PATH": "/var/task/model/model.joblib"
+    },
+    "state": "Active"
+  },
+  "n_cases": 9,
+  "n_ok": 9,
+  "cases": [
+    {
+      "case": "error_extra_field",
+      "expected_status": 400,
+      "actual_status": 400,
+      "ok": true,
+      "predicted_cnt": null,
+      "model_version": null,
+      "request_id": null,
+      "lambda_status": 200,
+      "function_error": null
+    },
+    {
+      "case": "error_float_int",
+      "expected_status": 400,
+      "actual_status": 400,
+      "ok": true,
+      "predicted_cnt": null,
+      "model_version": null,
+      "request_id": null,
+      "lambda_status": 200,
+      "function_error": null
+    },
+    {
+      "case": "error_missing",
+      "expected_status": 400,
+      "actual_status": 400,
+      "ok": true,
+      "predicted_cnt": null,
+      "model_version": null,
+      "request_id": null,
+      "lambda_status": 200,
+      "function_error": null
+    },
+    {
+      "case": "error_not_object",
+      "expected_status": 400,
+      "actual_status": 400,
+      "ok": true,
+      "predicted_cnt": null,
+      "model_version": null,
+      "request_id": null,
+      "lambda_status": 200,
+      "function_error": null
+    },
+    {
+      "case": "error_range",
+      "expected_status": 400,
+      "actual_status": 400,
+      "ok": true,
+      "predicted_cnt": null,
+      "model_version": null,
+      "request_id": null,
+      "lambda_status": 200,
+      "function_error": null
+    },
+    {
+      "case": "error_type",
+      "expected_status": 400,
+      "actual_status": 400,
+      "ok": true,
+      "predicted_cnt": null,
+      "model_version": null,
+      "request_id": null,
+      "lambda_status": 200,
+      "function_error": null
+    },
+    {
+      "case": "normal_01",
+      "expected_status": 200,
+      "actual_status": 200,
+      "ok": true,
+      "predicted_cnt": 597.83,
+      "model_version": "0e16c92e1dd6",
+      "request_id": "febcfc32-2755-46cb-ab96-cb5f46c12bbb",
+      "lambda_status": 200,
+      "function_error": null
+    },
+    {
+      "case": "normal_02",
+      "expected_status": 200,
+      "actual_status": 200,
+      "ok": true,
+      "predicted_cnt": 358.09,
+      "model_version": "0e16c92e1dd6",
+      "request_id": "f0bc2bba-64d3-4541-b6b0-62d34eac0f92",
+      "lambda_status": 200,
+      "function_error": null
+    },
+    {
+      "case": "normal_03",
+      "expected_status": 200,
+      "actual_status": 200,
+      "ok": true,
+      "predicted_cnt": 155.19,
+      "model_version": "0e16c92e1dd6",
+      "request_id": "e86efbc1-57a9-4bce-961e-fdac7b01aa6e",
+      "lambda_status": 200,
+      "function_error": null
+    }
+  ],
+  "outputs": [
+    "runs/20261116T164334Z_invoke",
+    "s3://bike-demand-2022100185/runs/20261116T164334Z_invoke/"
+  ]
+}

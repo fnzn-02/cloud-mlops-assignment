@@ -1,0 +1,5 @@
+START RequestId: efb86de7-1852-4a41-bfb1-619f2df52fa5 Version: $LATEST
+[WARNING]	2026-11-16T16:43:37.013Z	efb86de7-1852-4a41-bfb1-619f2df52fa5	입력 검증 실패: ["타입 오류: 'hr' — int 필요, 받은 값: 17.5"]
+END RequestId: efb86de7-1852-4a41-bfb1-619f2df52fa5
+REPORT RequestId: efb86de7-1852-4a41-bfb1-619f2df52fa5	Duration: 1.77 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 129 MB	
+
