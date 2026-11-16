@@ -84,16 +84,23 @@ def _load_model():
         s3.download_fileobj(bucket, key, tmp)
         tmp_path = tmp.name
 
-    payload = joblib.load(tmp_path)
-    os.unlink(tmp_path)
+    try:
+        # 모델 버전 = 파일 SHA256 앞 12자리 (src/train.py, scripts/deploy.sh와 동일한 방식)
+        h = hashlib.sha256()
+        with open(tmp_path, "rb") as f:
+            for chunk in iter(lambda: f.read(65536), b""):
+                h.update(chunk)
+        version = h.hexdigest()[:12]
 
-    # 모델 버전 계산 (SHA256 앞 12자리)
-    h = hashlib.sha256()
-    with open(tmp_path + ".ver", "wb") as f:
-        pass  # 임시 파일 이미 삭제됨 — S3 ETag 앞 12자리로 대체
-    s3_meta = s3.head_object(Bucket=bucket, Key=key)
-    etag = s3_meta.get("ETag", "").strip('"').replace("-", "")
-    version = etag[:12] if etag else "unknown"
+        payload = joblib.load(tmp_path)
+    finally:
+        os.unlink(tmp_path)
+
+    # S3 경로(models/<버전>/model.joblib)에 적힌 버전과 실제 파일 해시 비교
+    parts = key.split("/")
+    path_version = parts[-2] if len(parts) >= 2 else ""
+    if path_version != version:
+        log.warning("모델 버전 불일치 — 경로: %s, 파일 SHA256[:12]: %s", path_version, version)
 
     _cache["model"]   = payload["model"]
     _cache["features"] = payload["features"]
