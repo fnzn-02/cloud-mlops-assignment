@@ -114,8 +114,8 @@ def evaluate(cfg: dict):
     # 모델 로드
     model_path = Path(cfg["paths"]["model"])
     if not model_path.exists():
-        log.error("모델 파일 없음: %s — 먼저 make train 실행", model_path)
-        sys.exit(1)
+        # sys.exit 대신 예외 → pipeline.py가 실패 기록을 남기고 중단
+        raise FileNotFoundError(f"모델 파일 없음: {model_path} — 먼저 make train 실행")
 
     payload  = joblib.load(model_path)
     model    = payload["model"]
@@ -169,7 +169,13 @@ def evaluate(cfg: dict):
     run_log.save(
         stage="evaluate",
         status="success",
-        extra={"metrics": metrics},
+        extra={
+            "model_version": run_log.sha256_file(model_path)[:12],
+            "model_path":    str(model_path),
+            "n_test":        len(y_test),
+            "metrics":       metrics,
+            "outputs":       [str(metrics_path), str(error_path)],
+        },
     )
     return metrics
 

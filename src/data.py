@@ -26,8 +26,9 @@ log = logging.getLogger(__name__)
 
 # UCI 직접 다운로드 URL (zip)
 DATA_URL = "https://archive.ics.uci.edu/static/public/275/bike+sharing+dataset.zip"
-# 공식 SHA256 (hour.csv 원본 파일)
-HOUR_CSV_SHA256 = None  # 첫 실행 후 자동으로 기록됨 — 이후 고정
+# hour.csv 원본 SHA256 (2026-11-09 최초 다운로드 시 확인한 값으로 고정)
+# 다운로드·보관 중 파일이 바뀌면 검증 실패로 처리하고 다음 단계를 중단한다.
+HOUR_CSV_SHA256 = "e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f"
 
 RANGE_RULES = {
     "hum":       (0.0, 1.0),
@@ -68,6 +69,11 @@ def download(cfg: dict) -> Path:
 
     sha = _sha256(raw_path)
     log.info("SHA256: %s", sha)
+    if sha != HOUR_CSV_SHA256:
+        raise RuntimeError(
+            f"데이터 SHA256 불일치 — 기대: {HOUR_CSV_SHA256[:12]}…, 실제: {sha[:12]}… "
+            f"({raw_path} 파일이 손상되었거나 바뀜. 삭제 후 다시 실행하면 새로 내려받음)"
+        )
     return raw_path
 
 
@@ -143,4 +149,8 @@ if __name__ == "__main__":
         sys.exit(1)
     with open(cfg_path) as f:
         cfg = yaml.safe_load(f)
-    run(cfg)
+    try:
+        run(cfg)
+    except RuntimeError as e:
+        log.error("%s", e)
+        sys.exit(1)

@@ -34,11 +34,15 @@ def load_cfg():
 
 def run_stage(stage: str, cfg: dict):
     log.info("=== 단계 시작: %s ===", stage)
+    run_log.start()
     try:
         if stage == "data":
             import data as data_mod
-            data_mod.run(cfg)
-            run_log.save("data", "success")
+            train, test = data_mod.run(cfg)
+            run_log.save("data", "success", extra={
+                "n_train": len(train),
+                "n_test":  len(test),
+            })
 
         elif stage == "train":
             import train as train_mod

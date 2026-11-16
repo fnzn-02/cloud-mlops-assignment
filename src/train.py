@@ -78,6 +78,7 @@ def train(cfg: dict):
             "model_path":    str(model_path),
             "n_train":       len(X_train),
             "features":      features,
+            "outputs":       [str(model_path)],
         },
     )
     return model_path, version
