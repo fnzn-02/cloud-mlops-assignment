@@ -29,7 +29,7 @@
 - **입력**: `season`, `mnth`, `hr`, `holiday`, `weekday`, `workingday`, `weathersit`, `temp`, `atemp`, `hum`, `windspeed`
 - **출력**: 해당 시간의 예상 대여 대수 (`cnt`, 단위: 대/시간)
 - **데이터**: UCI Bike Sharing Dataset `hour.csv` (17,379행, 2011~2012 Washington D.C.)
-- **모델**: scikit-learn `RandomForestRegressor` (n_estimators=200, random_state=42)
+- **모델**: scikit-learn `RandomForestRegressor` (n_estimators=200, random_state=42, joblib 압축 3으로 저장 26MB)
 - **분할**: yr=0(2011) → 학습 8,645행 / yr=1(2012) → 평가 8,734행
 
 ## 3. 환경 정보
@@ -42,210 +42,34 @@
 - **GitHub**: https://github.com/fnzn-02/cloud-mlops-assignment (Public, main 브랜치)
 - **IAM 사용자**: `2022100185`
 
-## 4. AWS 구성
+## 4. AWS 구성 (최종)
 ```
-[로컬] 데이터 다운로드 → 검증/전처리 → 학습 → 평가 → model.joblib
-   │ 업로드 (모델 버전 = 파일 SHA256 앞 12자리)
-   ▼
-[S3] s3://<버킷>/models/<버전>/model.joblib
-     s3://<버킷>/runs/<run_id>/... (클라우드 실행 입력/결과)
-   │
-   ▼
-[Lambda, 컨테이너 이미지 (ECR)] 환경변수 MODEL_S3_URI로 모델 로드
-   입력 JSON → 입력 검증 → 예측 → 결과 JSON (+ S3에 결과 저장)
-   │
-   ▼
-[로컬 스크립트] aws lambda invoke로 실제 요청 → 응답을 runs/에 기록
+[로컬] make all → data/model.joblib (버전 = SHA256 앞 12자리)
+   │ make deploy
+   ├─→ [S3] s3://bike-demand-2022100185/models/<버전>/model.joblib (보관본)
+   └─→ [ECR] 모델 포함 이미지 → [Lambda] bike-demand-2022100185 (MODEL_PATH=/var/task/model/model.joblib)
+[로컬] make invoke → 실제 호출 → runs/ + s3://.../runs/
 ```
-- **Lambda 설정**: 메모리 1024MB, 타임아웃 30초, x86_64
-- **이미지 빌드**: `docker build --platform linux/amd64` (Apple Silicon Mac이므로)
-- **실행 역할**: IAM에서 직접 생성 (학교 계정이므로 LabRole 불필요)
+- Lambda: Python 3.14 컨테이너, x86_64, 1024MB, 30초, 실행 역할 `yeonsung-lambda-basic-role`(학교 제공)
+- 학교 계정 제약: CLI는 MFA 필수(`scripts/mfa_session.sh`), IAM 역할 생성 불가, 서울 리전만 허용
+  → 역할이 S3를 못 읽어 모델을 이미지에 포함 (자세한 내용 `docs/cloud.md`)
 
-## 5. 현재 폴더 구조
-```
-cloud-mlops-assignment/
-├── README.md              ✅ 완성
-├── PLAN.md                ✅ 이 파일
-├── Makefile               ✅ 완성
-├── requirements.txt       ✅ 완성 (버전 고정)
-├── .gitignore             ✅ 완성
-├── .env.example           ✅ 완성
-├── .env                   ✅ 로컬에만 존재 (Git 제외), BUCKET_NAME=bike-demand-2022100185, REGION=ap-northeast-2
-├── config/config.yaml     ✅ 완성
-├── src/
-│   ├── data.py            ✅ 완성 (다운로드, SHA256, 검증, 분할)
-│   ├── train.py           ✅ 완성 (학습, 모델 저장, 버전 계산)
-│   ├── evaluate.py        ✅ 완성 (MAE/RMSE, 오답 분석)
-│   ├── run_log.py         ✅ 완성 (실행 기록 공통 함수)
-│   └── pipeline.py        ✅ 완성 (단계별 실행, 실패 시 중단)
-├── service/
-│   ├── app.py             ✅ 완성 (Lambda 핸들러, 입력 검증, S3 결과 저장)
-│   └── Dockerfile         ✅ 완성 (linux/amd64, python:3.14)
-├── scripts/
-│   ├── deploy.sh          ✅ 완성 (S3→ECR→Lambda 배포) ← AWS 권한 문제로 실행 보류
-│   ├── invoke.sh          ❌ 미완성
-│   └── cleanup.sh         ❌ 미완성
-├── tests/
-│   ├── test_inputs/
-│   │   ├── normal_01.json ✅ 정상 입력 (6월 수요일 17시 퇴근, 맑음, season=2 봄)
-│   │   ├── normal_02.json ✅ 정상 입력 (12월 월요일 8시 출근, 흐림, season=4 가을)
-│   │   ├── normal_03.json ✅ 정상 입력 (3월 일요일·공휴일 12시, 맑음, season=1 겨울)
-│   │   ├── error_missing.json ✅ hum 필드 누락
-│   │   ├── error_range.json   ✅ hum=1.5 범위 초과
-│   │   └── error_type.json    ✅ season="여름" 타입 오류
-│   └── test_service.py    ✅ 완성 — 로컬 테스트 6/6 통과
-├── results/
-│   ├── metrics.json       ✅ 자동 생성됨
-│   └── error_analysis.md  ✅ 완성 (원인 상세 분석 포함)
-├── runs/                  ✅ data/train/evaluate 기록 있음
-└── docs/
-    ├── data.md            ✅ 완성
-    ├── cloud.md           ❌ 미완성
-    ├── incident.md        ❌ 미완성
-    ├── rerun.md           ❌ 미완성
-    └── cost_and_cleanup.md ❌ 미완성
-```
+## 5. 진행 상황 체크리스트
+- [x] 1. 환경: Python 3.14.5, AWS CLI 2.34.48, Docker 29.1.3
+- [x] 2. 저장소 초기화
+- [x] 3. 데이터: 다운로드, SHA256 고정·검증, 분할, `docs/data.md` (season 표기 실제 데이터 기준으로 수정)
+- [x] 4. 학습·평가: 베이스라인 2종 비교, 오답 분석 자동 생성 + `results/error_analysis_notes.md`
+- [x] 5. 실행 기록: 입력·설정·모델 버전·결과 위치 자동 기록, 실패 시 중단
+- [x] 6. 서비스: 입력 검증 강화, 로컬 테스트 9/9
+- [x] 7. 클라우드 배포·호출: 9/9, `docs/cloud.md`
+- [x] 8. 오류 재현·복구: 잘못된 MODEL_PATH(재현) + 콜드 스타트 타임아웃(실제 발생), `docs/incident.md`
+- [x] 9. 새 폴더 재실행: 결과 완전 재현, `docs/rerun.md`
+- [x] 10. 자원 정리: 4종 삭제 후 재조회 확인, `docs/cost_and_cleanup.md`
+- [ ] 11. 최종 점검 (사용자): 로그아웃 상태에서 저장소 열림 확인, README의 AI 도구 사용 범위 최종 확인
 
-## 6. 실행 결과 (완료)
-```
-데이터: 17,379행, 결측치/이상값 0건, SHA256: e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f
-모델 버전: f9a91eb09c39 (scikit-learn 1.7.2로 재학습, 이전 8b6cf2669bbe)
-
-평가 결과:
-  모델 (RandomForest)   — MAE: 88.78,  RMSE: 125.22  ✅ 최고
-  베이스라인 (hr별 평균) — MAE: 118.16, RMSE: 174.27
-  베이스라인 (전체 평균) — MAE: 168.25, RMSE: 227.81
-
-로컬 Lambda 핸들러 테스트: 6/6 통과
-  정상 입력 3건 → 200 + 예측값 반환 ✅
-  비정상 입력 3건(누락/범위/타입) → 400 + 에러 메시지 ✅
-```
-
-## ⚠️ 현재 블로커: AWS 권한 문제
-- 학교 IAM 계정(2022100185)에 `StudentSelfManagement` 정책이 있어 S3/Lambda/ECR/EC2 전부 차단됨
-- `s3:CreateBucket`, `lambda:ListFunctions`, `ecr:DescribeRepositories` 모두 AccessDenied
-- **해결 방법 선택 필요**:
-  1. **교수님한테 권한 요청** (추천): S3, ECR, Lambda, CloudWatch 권한 요청
-  2. **개인 AWS 계정 사용**: aws configure 로 개인 계정 키로 교체 후 배포 진행
-- 권한 문제 해결되면 `bash scripts/deploy.sh` 한 번에 배포 완료됨 (스크립트 완성됨)
-
-## 7. 앞으로 해야 할 작업 (우선순위 순)
-
-### ❌ Step 6: Lambda 서비스 구현
-**파일**: `service/app.py`, `service/Dockerfile`
-
-`service/app.py` 구현 내용:
-- Lambda handler 함수
-- 시작 시 S3에서 model.joblib 로드 (환경변수 `MODEL_S3_URI` 사용)
-- 입력 검증: 필수 필드 누락 → 400, 범위 밖 → 400, 타입 오류 → 400
-- 예측 후 결과를 S3 `runs/<run_id>/output.json` 에 저장
-- 응답에 `model_version` 포함
-
-`service/Dockerfile` 구현 내용:
-```dockerfile
-FROM public.ecr.aws/lambda/python:3.14
-# platform: linux/amd64 (Apple Silicon Mac에서 빌드할 때 주의)
-```
-
-**테스트 입력 파일** (`tests/test_inputs/`):
-- `normal_01.json` ~ `normal_03.json`: 정상 입력 3건 이상
-- `error_missing.json`: 필수 필드 누락
-- `error_range.json`: 범위 밖 값 (hum > 1.0 등)
-- `error_type.json`: 타입 오류 (문자열 입력)
-
-`tests/test_service.py`: 로컬 handler 직접 호출 테스트
-
-### ❌ Step 7: 클라우드 배포
-**파일**: `scripts/deploy.sh`, `docs/cloud.md`
-
-`scripts/deploy.sh` 순서:
-1. S3 버킷 생성 (`aws s3 mb`)
-2. 모델 S3 업로드 (`aws s3 cp`)
-3. ECR 저장소 생성 (`aws ecr create-repository`)
-4. Docker 이미지 빌드 (`--platform linux/amd64`)
-5. ECR push
-6. Lambda 함수 생성/업데이트 (`aws lambda create-function` 또는 `update-function-code`)
-7. 환경변수 설정 (`MODEL_S3_URI`)
-
-**`.env`에 필요한 값** (사용자가 직접 채워야 함):
-```
-BUCKET_NAME=학생이-정할-버킷-이름
-```
-
-### ❌ Step 8: 오류 재현과 복구
-**파일**: `docs/incident.md`
-
-시나리오: **잘못된 모델 경로**
-1. `MODEL_S3_URI`를 존재하지 않는 경로로 설정해 Lambda 배포
-2. 정상 입력으로 호출 → 실패 확인 (CloudWatch 로그 저장)
-3. 원인 확인: `aws s3 ls`로 실제 경로 비교
-4. 수정: 올바른 경로로 고치고 재배포
-5. 같은 요청 재실행 → 성공 로그 저장
-6. `docs/incident.md`에 전 과정 기록
-
-**`scripts/invoke.sh`도 이 단계에서 완성**:
-- 정상 입력 3건 호출 → 200 응답 확인
-- 비정상 입력 호출 → 400 응답 확인
-- 각 결과를 `runs/`에 저장
-
-### ❌ Step 9: 새 폴더 재실행
-**파일**: `docs/rerun.md`
-
+## 6. 다시 배포해야 할 때
 ```bash
-cd /tmp
-git clone https://github.com/fnzn-02/cloud-mlops-assignment.git rerun-test
-cd rerun-test
-# README 절차대로 실행
-make all
+bash scripts/mfa_session.sh <MFA 코드>
+make all && make test && make deploy && make invoke
+make clean-cloud   # 끝나면 정리
 ```
-결과를 `docs/rerun.md`에 기록
-
-### ❌ Step 10: 자원 정리
-**파일**: `scripts/cleanup.sh`, `docs/cost_and_cleanup.md`
-
-`cleanup.sh` 순서:
-1. Lambda 함수 삭제
-2. ECR 저장소 삭제
-3. S3 객체 및 버킷 삭제
-4. CloudWatch 로그 그룹 삭제
-5. 각 `list`/`describe` 조회 결과 저장
-
-### ❌ Step 11: 최종 점검
-```bash
-# 비밀 값 검색
-git log -p | grep -iE "key|token|secret|password"
-
-# 로그아웃 상태에서 저장소 접근 확인 (시크릿 모드 브라우저)
-# https://github.com/fnzn-02/cloud-mlops-assignment
-
-# main 브랜치 확인
-git branch
-```
-
-## 8. 커밋 가이드 (남은 작업용)
-
-| 작업 완료 후 | 커밋 메시지 |
-|---|---|
-| service/app.py + Dockerfile | `feat(service): add Lambda handler and Dockerfile` |
-| tests/ | `test: add local service tests and test inputs` |
-| scripts/deploy.sh | `feat(deploy): add S3/ECR/Lambda deploy script` |
-| scripts/invoke.sh | `feat(invoke): add Lambda invoke and result logging script` |
-| docs/cloud.md | `docs: add cloud configuration and execution log` |
-| docs/incident.md | `docs: add error reproduction and recovery log` |
-| scripts/cleanup.sh + docs/cost_and_cleanup.md | `chore: add cleanup script and cost/resource log` |
-| docs/rerun.md | `docs: add rerun verification log` |
-
-## 9. 진행 상황 체크리스트
-- [x] 1. 환경 확인: Python 3.14.5, AWS CLI 2.34.48, Docker 29.1.3
-- [x] 2. 저장소 초기화: git init, .gitignore, requirements.txt, README.md, Makefile
-- [x] 3. 데이터: 다운로드, SHA256 확인, 검증(이상값 0건), 분할, `docs/data.md`
-- [x] 4. 학습과 평가: RandomForest vs 베이스라인, `results/metrics.json`, 오답 분석
-- [x] 5. 실행 기록: `run_log.py`, `pipeline.py` (실패 시 중단), `runs/*.json` 자동 생성
-- [x] 6. 서비스: `service/app.py` ✅, `service/Dockerfile` ✅, 로컬 테스트 6/6 통과 ✅
-- [ ] 7. 클라우드 배포: ⚠️ AWS 권한 문제 해결 후 `bash scripts/deploy.sh` 실행
-       → 해결 시: S3 업로드, ECR push, Lambda 생성, 실제 호출, `docs/cloud.md` 작성
-- [ ] 8. 오류 재현과 복구: `docs/incident.md`, `scripts/invoke.sh` 작성
-       → 시나리오: MODEL_S3_URI를 잘못된 경로로 설정 → 실패 확인 → 수정 → 재실행
-- [ ] 9. 새 폴더 재실행: clone → README대로 실행 → `docs/rerun.md`
-- [ ] 10. 자원 정리: `scripts/cleanup.sh`, `docs/cost_and_cleanup.md`
-- [ ] 11. 최종 점검: 비밀 값 검색, 로그아웃 상태에서 저장소 확인, main 브랜치 확인
