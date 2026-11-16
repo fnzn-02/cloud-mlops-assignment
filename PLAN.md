@@ -87,9 +87,9 @@ cloud-mlops-assignment/
 │   └── cleanup.sh         ❌ 미완성
 ├── tests/
 │   ├── test_inputs/
-│   │   ├── normal_01.json ✅ 정상 입력 (여름 오후 5시)
-│   │   ├── normal_02.json ✅ 정상 입력 (겨울 출근)
-│   │   ├── normal_03.json ✅ 정상 입력 (봄 공휴일 낮)
+│   │   ├── normal_01.json ✅ 정상 입력 (6월 수요일 17시 퇴근, 맑음, season=2 봄)
+│   │   ├── normal_02.json ✅ 정상 입력 (12월 월요일 8시 출근, 흐림, season=4 가을)
+│   │   ├── normal_03.json ✅ 정상 입력 (3월 일요일·공휴일 12시, 맑음, season=1 겨울)
 │   │   ├── error_missing.json ✅ hum 필드 누락
 │   │   ├── error_range.json   ✅ hum=1.5 범위 초과
 │   │   └── error_type.json    ✅ season="여름" 타입 오류
