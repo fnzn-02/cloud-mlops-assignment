@@ -75,7 +75,7 @@ aws ecr get-login-password --region "$REGION" | \
   docker login --username AWS --password-stdin "${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com"
 
 # Apple Silicon → linux/amd64 강제
-docker build --platform linux/amd64 -t "${ECR_REPO}:${IMAGE_TAG}" .
+docker build --platform linux/amd64 -f service/Dockerfile -t "${ECR_REPO}:${IMAGE_TAG}" .
 docker tag "${ECR_REPO}:${IMAGE_TAG}" "${ECR_URI}:${IMAGE_TAG}"
 docker push "${ECR_URI}:${IMAGE_TAG}"
 echo "이미지 push 완료: ${ECR_URI}:${IMAGE_TAG}"

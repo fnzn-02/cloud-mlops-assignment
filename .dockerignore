@@ -1,0 +1,13 @@
+# 빌드 컨텍스트에서 제외 (이미지에 필요한 것은 requirements.txt, service/app.py 뿐)
+.git
+.venv
+.env
+.env.*
+data/
+runs/
+results/
+docs/
+tests/
+**/__pycache__
+.DS_Store
+.vscode
