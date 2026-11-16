@@ -32,9 +32,80 @@ def rmse(y_true, y_pred):
     return float(np.sqrt(np.mean((np.array(y_true) - np.array(y_pred)) ** 2)))
 
 
+# 사람이 읽을 수 있는 값 변환
+# season: UCI Readme는 1=봄으로 적혀 있지만 실제 데이터는 1월·12월이 1, 3~6월이 2이므로
+#         실제 데이터 기준(천문학적 계절, 약 3/21·6/21·9/23·12/21 경계)으로 표기한다.
+SEASON   = {1: "겨울", 2: "봄", 3: "여름", 4: "가을"}
+WEEKDAY  = {0: "일요일", 1: "월요일", 2: "화요일", 3: "수요일", 4: "목요일", 5: "금요일", 6: "토요일"}
+WEATHER  = {1: "맑음/구름 조금", 2: "안개+흐림", 3: "약한 눈/비", 4: "폭우/폭설"}
+
+
+def _describe(col: str, v) -> str:
+    if col == "season":     return SEASON.get(int(v), "?")
+    if col == "mnth":       return f"{int(v)}월"
+    if col == "hr":         return f"{int(v)}시"
+    if col == "holiday":    return "공휴일" if int(v) else "공휴일 아님"
+    if col == "weekday":    return WEEKDAY.get(int(v), "?")
+    if col == "workingday": return "근무일" if int(v) else "휴일/주말"
+    if col == "weathersit": return WEATHER.get(int(v), "?")
+    if col == "temp":       return f"기온 약 {v * 41:.1f}°C"
+    if col == "atemp":      return f"체감 기온 약 {v * 50:.1f}°C"
+    if col == "hum":        return f"습도 {v * 100:.0f}%"
+    if col == "windspeed":  return f"풍속 약 {v * 67:.1f} km/h"
+    return ""
+
+
+def _write_error_analysis(row, pred, train_df, test_df, features, target) -> Path:
+    """
+    오차 최대 1건을 자동으로 기록한다 (재실행할 때마다 다시 생성됨).
+    사람이 쓴 원인 분석은 results/error_analysis_notes.md 에 따로 둔다.
+    """
+    actual = int(row[target])
+    hr = int(row["hr"])
+    tr_hr = train_df.loc[train_df["hr"] == hr, target]
+    te_hr = test_df.loc[test_df["hr"] == hr, target]
+
+    lines = [
+        "# 오답 분석 (오차 최대 1건, 자동 생성)",
+        "",
+        "> 이 파일은 `make evaluate` 실행 시 `src/evaluate.py`가 다시 만든다.",
+        "> 원인 분석은 [error_analysis_notes.md](error_analysis_notes.md) 참고.",
+        "",
+        "## 대상",
+        f"- 원본 행 번호(`instant`): {int(row['instant'])}",
+        f"- 날짜(`dteday`): {row['dteday']}",
+        "",
+        "## 입력",
+        "| 피처 | 값 | 의미 |",
+        "|---|---|---|",
+    ]
+    for col in features:
+        lines.append(f"| {col} | {row[col]} | {_describe(col, row[col])} |")
+    lines += [
+        "",
+        "## 결과",
+        f"- 정답(`{target}`): {actual} 대/시간",
+        f"- 예측값: {pred:.1f} 대/시간",
+        f"- 오차: {actual - pred:+.1f} 대/시간 (실제 대비 {abs(actual - pred) / actual * 100:.0f}%)",
+        "",
+        f"## 비교: 같은 시간대({hr}시) 대여량",
+        "| 구분 | 평균 | 최대 |",
+        "|---|---|---|",
+        f"| 학습 데이터 (2011) | {tr_hr.mean():.1f} | {int(tr_hr.max())} |",
+        f"| 평가 데이터 (2012) | {te_hr.mean():.1f} | {int(te_hr.max())} |",
+        f"| 학습 데이터 전체 시간대 최대 | - | {int(train_df[target].max())} |",
+        "",
+    ]
+
+    path = Path("results/error_analysis.md")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(lines), encoding="utf-8")
+    return path
+
+
 def evaluate(cfg: dict):
     # 데이터 로드
-    _, test_df = data_mod.run(cfg)
+    train_df, test_df = data_mod.run(cfg)
     features, target = data_mod.get_features(cfg)
 
     X_test = test_df[features]
@@ -90,31 +161,9 @@ def evaluate(cfg: dict):
     errors = np.abs(y_test - y_pred)
     worst_idx = int(np.argmax(errors))
     worst_row = test_df.iloc[worst_idx]
-
-    analysis_lines = [
-        "# 오답 분석 (오차 최대 1건)\n",
-        f"- **인덱스**: {worst_idx}",
-        f"- **입력**:",
-        f"  ```",
-    ]
-    for col in features:
-        analysis_lines.append(f"  {col}: {worst_row[col]}")
-    analysis_lines += [
-        f"  ```",
-        f"- **정답(cnt)**: {int(y_test[worst_idx])} 대/시간",
-        f"- **예측값**: {y_pred[worst_idx]:.1f} 대/시간",
-        f"- **오차**: {errors[worst_idx]:.1f} 대/시간",
-        "",
-        "## 원인 추정",
-        "- 2012년에는 2011년 대비 이용자 수가 크게 증가(yr 피처 미사용으로 반영 어려움)",
-        "- 특수 이벤트·공휴일 조합, 또는 급격한 날씨 변화로 대여량이 비정상적으로 높았을 가능성",
-        "- 모델이 학습하지 못한 극단적 수요 패턴",
-    ]
-
-    error_path = Path("results/error_analysis.md")
-    error_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(error_path, "w") as f:
-        f.write("\n".join(analysis_lines))
+    error_path = _write_error_analysis(
+        worst_row, float(y_pred[worst_idx]), train_df, test_df, features, target
+    )
     log.info("오답 분석 저장: %s", error_path)
 
     run_log.save(
