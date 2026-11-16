@@ -7,4 +7,4 @@ scikit-learn==1.7.2
 scipy==1.16.3
 joblib==1.5.2
 pyyaml==6.0.3
-boto3==1.35.76
+# AWS 작업은 boto3가 아니라 AWS CLI(scripts/*.sh)로 수행한다

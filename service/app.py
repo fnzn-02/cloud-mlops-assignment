@@ -1,8 +1,13 @@
 """
 app.py — Lambda 핸들러
 
+모델은 컨테이너 이미지 안에 포함된다 (service/Dockerfile).
+  학교 계정의 Lambda 실행 역할(yeonsung-lambda-basic-role)은 CloudWatch Logs 권한만 있어
+  Lambda가 S3를 읽을 수 없으므로, 모델을 이미지에 넣는 방식을 선택했다.
+  S3에는 CLI로 모델 보관본(models/<버전>/)과 호출 결과(runs/)를 올린다.
+
 환경변수:
-  MODEL_S3_URI  s3://<버킷>/models/<버전>/model.joblib
+  MODEL_PATH  이미지 안 모델 경로 (기본: /var/task/model/model.joblib)
 
 입력 (JSON):
   {
@@ -16,7 +21,8 @@ app.py — Lambda 핸들러
     "predicted_cnt": 348.1,
     "unit": "대/시간",
     "model_version": "f9a91eb09c39",
-    "run_id": "20261116T..."
+    "run_id": "20261116T..._<요청ID 앞 8자리>",
+    "request_id": "<Lambda 요청 ID — CloudWatch 로그 검색용>"
   }
 
 에러:
@@ -28,11 +34,10 @@ import hashlib
 import json
 import logging
 import os
-import tempfile
 import uuid
 from datetime import datetime, timezone
+from pathlib import Path
 
-import boto3
 import joblib
 import pandas as pd
 
@@ -60,56 +65,33 @@ FEATURE_ORDER = list(FIELDS.keys())
 _cache = {}
 
 
+DEFAULT_MODEL_PATH = "/var/task/model/model.joblib"
+
+
 def _load_model():
-    """S3에서 model.joblib 를 다운로드해 캐시한다. 시작 시 경로 확인 포함."""
+    """이미지 안의 model.joblib 를 로드해 캐시한다 (컨테이너 재사용 시 재로드 안 함)."""
     if _cache:
         return _cache
 
-    model_uri = os.environ.get("MODEL_S3_URI", "")
-    if not model_uri.startswith("s3://"):
-        raise RuntimeError(f"MODEL_S3_URI 환경변수가 올바르지 않음: '{model_uri}'")
+    model_path = Path(os.environ.get("MODEL_PATH", DEFAULT_MODEL_PATH))
+    if not model_path.is_file():
+        raise RuntimeError(f"모델 파일을 찾을 수 없음: {model_path} (MODEL_PATH 환경변수 확인)")
 
-    # s3://bucket/key 파싱
-    without_scheme = model_uri[5:]
-    bucket, _, key = without_scheme.partition("/")
+    # 모델 버전 = 파일 SHA256 앞 12자리 (src/train.py, scripts/deploy.sh와 동일한 방식)
+    h = hashlib.sha256()
+    with open(model_path, "rb") as f:
+        for chunk in iter(lambda: f.read(65536), b""):
+            h.update(chunk)
+    version = h.hexdigest()[:12]
 
-    s3 = boto3.client("s3", region_name=os.environ.get("AWS_REGION", "ap-northeast-2"))
-
-    # 경로 존재 여부 확인 (명확한 에러 메시지를 위해)
-    try:
-        s3.head_object(Bucket=bucket, Key=key)
-    except s3.exceptions.ClientError as e:
-        code = e.response["Error"]["Code"]
-        raise RuntimeError(f"모델 파일을 찾을 수 없음 ({code}): s3://{bucket}/{key}")
-
-    with tempfile.NamedTemporaryFile(suffix=".joblib", delete=False) as tmp:
-        s3.download_fileobj(bucket, key, tmp)
-        tmp_path = tmp.name
-
-    try:
-        # 모델 버전 = 파일 SHA256 앞 12자리 (src/train.py, scripts/deploy.sh와 동일한 방식)
-        h = hashlib.sha256()
-        with open(tmp_path, "rb") as f:
-            for chunk in iter(lambda: f.read(65536), b""):
-                h.update(chunk)
-        version = h.hexdigest()[:12]
-
-        payload = joblib.load(tmp_path)
-    finally:
-        os.unlink(tmp_path)
-
-    # S3 경로(models/<버전>/model.joblib)에 적힌 버전과 실제 파일 해시 비교
-    parts = key.split("/")
-    path_version = parts[-2] if len(parts) >= 2 else ""
-    if path_version != version:
-        log.warning("모델 버전 불일치 — 경로: %s, 파일 SHA256[:12]: %s", path_version, version)
+    payload = joblib.load(model_path)
 
     _cache["model"]   = payload["model"]
     _cache["features"] = payload["features"]
     _cache["version"] = version
     _cache["baseline_mean"] = payload["baseline_mean"]
 
-    log.info("모델 로드 완료 — 버전: %s, URI: %s", version, model_uri)
+    log.info("모델 로드 완료 — 버전: %s, 경로: %s", version, model_path)
     return _cache
 
 
@@ -171,24 +153,6 @@ def _validate(body) -> tuple[list, dict]:
     return errors, cleaned
 
 
-def _save_result_to_s3(run_id: str, payload: dict):
-    """결과를 S3 runs/<run_id>/output.json 에 저장."""
-    try:
-        model_uri = os.environ.get("MODEL_S3_URI", "")
-        bucket = model_uri[5:].split("/")[0]
-        key = f"runs/{run_id}/output.json"
-        s3 = boto3.client("s3", region_name=os.environ.get("AWS_REGION", "ap-northeast-2"))
-        s3.put_object(
-            Bucket=bucket,
-            Key=key,
-            Body=json.dumps(payload, ensure_ascii=False),
-            ContentType="application/json",
-        )
-        log.info("결과 저장: s3://%s/%s", bucket, key)
-    except Exception as e:
-        log.warning("결과 S3 저장 실패 (무시): %s", e)
-
-
 def handler(event, context):
     """Lambda 핸들러 진입점."""
     # 요청마다 고유한 run_id — Lambda에서는 요청 ID(CloudWatch 로그와 연결), 로컬에서는 uuid
@@ -229,12 +193,12 @@ def handler(event, context):
     result = {
         "statusCode": 200,
         "run_id": run_id,
+        "request_id": request_id,
         "predicted_cnt": predicted,
         "unit": "대/시간",
         "model_version": cache["version"],
         "input": cleaned,
     }
 
-    _save_result_to_s3(run_id, result)
     log.info("예측 완료 — run_id: %s, predicted: %.2f", run_id, predicted)
     return result

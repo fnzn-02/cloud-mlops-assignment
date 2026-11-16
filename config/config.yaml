@@ -45,11 +45,12 @@ model:
     random_state: 42
     n_jobs: -1
 
-aws:
+aws:                     # 참고용 — 실제 값은 .env 에서 읽는다 (scripts/deploy.sh, invoke.sh)
   region: ap-northeast-2
-  bucket: ""             # .env의 BUCKET_NAME으로 덮어씀
-  function_name: bike-demand
-  ecr_repo: bike-demand
+  bucket: bike-demand-2022100185
+  function_name: bike-demand-2022100185
+  ecr_repo: bike-demand-2022100185
+  lambda_role: yeonsung-lambda-basic-role
   lambda_memory: 1024
   lambda_timeout: 30
   lambda_arch: x86_64

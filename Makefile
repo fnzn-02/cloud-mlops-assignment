@@ -1,4 +1,4 @@
-.PHONY: all data train evaluate deploy invoke clean-cloud help
+.PHONY: all data train evaluate test deploy invoke clean-cloud help
 
 # .env 로드 (파일 있을 때만)
 -include .env
@@ -9,6 +9,7 @@ help:
 	@echo "  make data         데이터 다운로드, 검증, 분할"
 	@echo "  make train        모델 학습 및 저장"
 	@echo "  make evaluate     평가 지표 계산 및 저장"
+	@echo "  make test         Lambda 핸들러 로컬 테스트 (AWS 불필요)"
 	@echo "  make deploy       S3 업로드 + ECR push + Lambda 배포"
 	@echo "  make invoke       Lambda 실제 호출 테스트"
 	@echo "  make all          data → train → evaluate"
@@ -24,6 +25,9 @@ train:
 
 evaluate:
 	python3 src/pipeline.py --stage evaluate
+
+test:
+	python3 tests/test_service.py
 
 deploy:
 	bash scripts/deploy.sh

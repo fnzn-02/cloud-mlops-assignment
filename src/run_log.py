@@ -76,7 +76,8 @@ def _config_info() -> tuple[dict, dict]:
     return config, data
 
 
-def save(stage: str, status: str, extra: dict = None, error: str = None) -> Path:
+def save(stage: str, status: str, extra: dict = None, error: str = None,
+         started_at: datetime = None) -> Path:
     """
     실행 기록을 runs/ 디렉토리에 JSON으로 저장.
 
@@ -85,13 +86,14 @@ def save(stage: str, status: str, extra: dict = None, error: str = None) -> Path
         status: "success" 또는 "failed"
         extra:  추가 정보 (model_version, metrics, outputs 등)
         error:  실패 시 에러 메시지
+        started_at: 시작 시각 (셸 스크립트에서 호출할 때 지정, 없으면 start() 값 사용)
 
     Returns:
         저장된 파일 경로
     """
     global _started_at
     finished = datetime.now(timezone.utc)
-    started = _started_at or finished
+    started = started_at or _started_at or finished
     _started_at = None
 
     run_id = f"{started.strftime('%Y%m%dT%H%M%SZ')}_{stage}"
@@ -121,3 +123,22 @@ def save(stage: str, status: str, extra: dict = None, error: str = None) -> Path
 
     print(f"[run_log] 기록 저장: {out}")
     return out
+
+
+if __name__ == "__main__":
+    # 셸 스크립트(scripts/deploy.sh, invoke.sh)에서 같은 형식으로 기록을 남기기 위한 입구
+    #   python src/run_log.py --stage deploy --status success \
+    #       --started-at 2026-11-17T01:00:00+00:00 --extra-file /tmp/extra.json [--error "..."]
+    import argparse
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--stage", required=True)
+    ap.add_argument("--status", required=True, choices=["success", "failed"])
+    ap.add_argument("--started-at")
+    ap.add_argument("--extra-file")
+    ap.add_argument("--error")
+    a = ap.parse_args()
+
+    extra = json.loads(Path(a.extra_file).read_text()) if a.extra_file else None
+    started = datetime.fromisoformat(a.started_at) if a.started_at else None
+    save(a.stage, a.status, extra=extra, error=a.error, started_at=started)
