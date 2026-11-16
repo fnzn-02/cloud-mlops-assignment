@@ -80,7 +80,7 @@ cloud-mlops-assignment/
 │   └── pipeline.py        ✅ 완성 (단계별 실행, 실패 시 중단)
 ├── service/
 │   ├── app.py             ✅ 완성 (Lambda 핸들러, 입력 검증, S3 결과 저장)
-│   └── Dockerfile         ✅ 완성 (linux/amd64, python:3.11)
+│   └── Dockerfile         ✅ 완성 (linux/amd64, python:3.14)
 ├── scripts/
 │   ├── deploy.sh          ✅ 완성 (S3→ECR→Lambda 배포) ← AWS 권한 문제로 실행 보류
 │   ├── invoke.sh          ❌ 미완성
@@ -109,7 +109,7 @@ cloud-mlops-assignment/
 ## 6. 실행 결과 (완료)
 ```
 데이터: 17,379행, 결측치/이상값 0건, SHA256: e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f
-모델 버전: 8b6cf2669bbe
+모델 버전: f9a91eb09c39 (scikit-learn 1.7.2로 재학습, 이전 8b6cf2669bbe)
 
 평가 결과:
   모델 (RandomForest)   — MAE: 88.78,  RMSE: 125.22  ✅ 최고
@@ -143,7 +143,7 @@ cloud-mlops-assignment/
 
 `service/Dockerfile` 구현 내용:
 ```dockerfile
-FROM public.ecr.aws/lambda/python:3.11
+FROM public.ecr.aws/lambda/python:3.14
 # platform: linux/amd64 (Apple Silicon Mac에서 빌드할 때 주의)
 ```
 

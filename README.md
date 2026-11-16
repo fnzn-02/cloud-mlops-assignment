@@ -17,7 +17,7 @@
 - **선택 이유**: 요청 시에만 실행되는 서비스라 Lambda가 적합. 상시 서버 불필요, 비용 최소화.
 
 ## 환경 요구사항
-- Python 3.10+
+- Python 3.14 (로컬 학습과 Lambda 런타임 `public.ecr.aws/lambda/python:3.14` 동일, 라이브러리 버전은 `requirements.txt`에 고정)
 - AWS CLI 설정 완료 (`aws configure`)
 - Docker 설치
 

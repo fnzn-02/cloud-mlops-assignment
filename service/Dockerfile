@@ -2,7 +2,8 @@
 # 저장소 루트에서 실행 (requirements.txt를 COPY하므로 빌드 컨텍스트는 루트):
 # docker build --platform linux/amd64 -f service/Dockerfile -t bike-demand .
 
-FROM public.ecr.aws/lambda/python:3.11
+# 로컬 학습 환경과 같은 Python 3.14 (모델 파일 호환성)
+FROM public.ecr.aws/lambda/python:3.14
 
 # 의존성 설치
 COPY requirements.txt .

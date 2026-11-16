@@ -1,0 +1,54 @@
+{
+  "run_id": "20261116T160215Z_evaluate",
+  "stage": "evaluate",
+  "started_at": "2026-11-16T16:02:15.534664+00:00",
+  "finished_at": "2026-11-16T16:02:16.400792+00:00",
+  "status": "success",
+  "git_commit": "8d2efd7",
+  "git_dirty": true,
+  "error": null,
+  "input": {
+    "data_path": "data/hour.csv",
+    "data_sha256": "e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f"
+  },
+  "config": {
+    "path": "config/config.yaml",
+    "sha256": "17bf789e89a37f532c89d5f4e7b9221ac8ad2e59c0a4bf3f5e209a60cd62eec7",
+    "split": {
+      "train_year": 0,
+      "test_year": 1
+    },
+    "model": {
+      "type": "RandomForestRegressor",
+      "params": {
+        "n_estimators": 200,
+        "max_depth": null,
+        "random_state": 42,
+        "n_jobs": -1
+      }
+    }
+  },
+  "model_version": "f9a91eb09c39",
+  "model_path": "data/model.joblib",
+  "n_test": 8734,
+  "metrics": {
+    "n_test": 8734,
+    "model": {
+      "MAE": 88.7809,
+      "RMSE": 125.2247
+    },
+    "baseline_mean": {
+      "MAE": 168.2519,
+      "RMSE": 227.808
+    },
+    "baseline_hr": {
+      "MAE": 118.1572,
+      "RMSE": 174.2655
+    },
+    "unit": "대/시간"
+  },
+  "outputs": [
+    "results/metrics.json",
+    "results/error_analysis.md"
+  ]
+}

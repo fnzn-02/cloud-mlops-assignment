@@ -15,7 +15,7 @@ app.py — Lambda 핸들러
   {
     "predicted_cnt": 348.1,
     "unit": "대/시간",
-    "model_version": "8b6cf2669bbe",
+    "model_version": "f9a91eb09c39",
     "run_id": "20261116T..."
   }
 

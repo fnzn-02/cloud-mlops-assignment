@@ -1,8 +1,10 @@
 # 의존성 패키지 (버전 고정)
-pandas==2.2.3
-scikit-learn==1.5.2
-joblib==1.4.2
+# Python 3.14 기준 — 로컬 학습과 Lambda 런타임(public.ecr.aws/lambda/python:3.14) 동일
+# 모두 Python 3.14용 사전 빌드 파일(wheel)이 macOS arm64 / Linux x86_64 양쪽에 있는 버전
+pandas==2.3.3
+numpy==2.3.5
+scikit-learn==1.7.2
+scipy==1.16.3
+joblib==1.5.2
+pyyaml==6.0.3
 boto3==1.35.76
-pyyaml==6.0.2
-requests==2.32.3
-numpy==2.1.3
