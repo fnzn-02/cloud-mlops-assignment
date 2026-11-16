@@ -29,10 +29,12 @@ import json
 import logging
 import os
 import tempfile
+import uuid
 from datetime import datetime, timezone
 
 import boto3
 import joblib
+import pandas as pd
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -111,14 +113,38 @@ def _load_model():
     return _cache
 
 
-def _validate(body: dict) -> tuple[list, dict]:
+def _coerce(raw, expected: type):
+    """
+    값을 기대 타입으로 변환. 허용하지 않는 입력이면 None 반환.
+    - 문자열, bool은 숫자로 인정하지 않음 ("17", true 등)
+    - int 필드: 정수 또는 소수점 아래가 0인 실수(17.0)만 허용, 17.5는 거부
+    - float 필드: int/float 허용
+    """
+    if isinstance(raw, bool) or not isinstance(raw, (int, float)):
+        return None
+    if expected is int:
+        if isinstance(raw, float) and not raw.is_integer():
+            return None
+        return int(raw)
+    return float(raw)
+
+
+def _validate(body) -> tuple[list, dict]:
     """
     입력 검증.
     반환: (errors, cleaned_values)
     errors가 비어있으면 통과.
     """
+    if not isinstance(body, dict):
+        return [f"입력은 JSON 객체여야 함, 받은 타입: {type(body).__name__}"], {}
+
     errors = []
     cleaned = {}
+
+    # 정의되지 않은 필드 거부 (cnt, casual, registered 등 정답·누수 컬럼 유입 방지)
+    unknown = sorted(set(body) - set(FIELDS))
+    if unknown:
+        errors.append(f"허용되지 않은 필드: {unknown}")
 
     for field, rule in FIELDS.items():
         if field not in body:
@@ -126,10 +152,8 @@ def _validate(body: dict) -> tuple[list, dict]:
             continue
 
         raw = body[field]
-        # 타입 변환 시도
-        try:
-            val = rule["type"](raw)
-        except (ValueError, TypeError):
+        val = _coerce(raw, rule["type"])
+        if val is None:
             errors.append(
                 f"타입 오류: '{field}' — {rule['type'].__name__} 필요, 받은 값: {repr(raw)}"
             )
@@ -167,7 +191,9 @@ def _save_result_to_s3(run_id: str, payload: dict):
 
 def handler(event, context):
     """Lambda 핸들러 진입점."""
-    run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "_invoke"
+    # 요청마다 고유한 run_id — Lambda에서는 요청 ID(CloudWatch 로그와 연결), 로컬에서는 uuid
+    request_id = getattr(context, "aws_request_id", None) or uuid.uuid4().hex
+    run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "_" + request_id[:8]
 
     # ── body 파싱 ────────────────────────────────────────────────────────────
     if isinstance(event, dict) and "body" in event:
@@ -195,7 +221,7 @@ def handler(event, context):
         return {"statusCode": 500, "error": str(e)}
 
     features = cache["features"]
-    X = [[cleaned[f] for f in features]]
+    X = pd.DataFrame([[cleaned[f] for f in features]], columns=features)
     predicted = float(cache["model"].predict(X)[0])
     predicted = round(max(0.0, predicted), 2)  # 음수 방지
 

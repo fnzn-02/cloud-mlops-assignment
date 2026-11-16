@@ -43,6 +43,9 @@ test_cases = [
     ("오류: 필드 누락", "tests/test_inputs/error_missing.json", 400),
     ("오류: 범위 초과", "tests/test_inputs/error_range.json",   400),
     ("오류: 타입 오류", "tests/test_inputs/error_type.json",    400),
+    ("오류: 정수 필드에 소수", "tests/test_inputs/error_float_int.json",   400),
+    ("오류: 정답 필드 포함",   "tests/test_inputs/error_extra_field.json", 400),
+    ("오류: 객체가 아닌 입력", "tests/test_inputs/error_not_object.json",  400),
 ]
 
 passed = 0
