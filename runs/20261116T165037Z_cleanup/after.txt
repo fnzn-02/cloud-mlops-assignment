@@ -1,0 +1,10 @@
+## 삭제 후 재조회 (2026-11-16T16:50:47Z)
+lambda: deleted (ResourceNotFoundException)
+ecr: deleted (RepositoryNotFoundException)
+s3: deleted (404)
+log_group: deleted (조회 결과 0개)
+### 이름에 학번이 들어간 남은 자원 검색
+Lambda: 
+ECR:    
+S3:     
+Logs:   
