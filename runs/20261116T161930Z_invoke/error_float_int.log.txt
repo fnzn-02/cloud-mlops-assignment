@@ -1,0 +1,5 @@
+START RequestId: fd2e1f34-29cd-40ba-962d-b2e9c485b23b Version: $LATEST
+[WARNING]	2026-11-16T16:19:37.100Z	fd2e1f34-29cd-40ba-962d-b2e9c485b23b	입력 검증 실패: ["타입 오류: 'hr' — int 필요, 받은 값: 17.5"]
+END RequestId: fd2e1f34-29cd-40ba-962d-b2e9c485b23b
+REPORT RequestId: fd2e1f34-29cd-40ba-962d-b2e9c485b23b	Duration: 1.92 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 129 MB	
+

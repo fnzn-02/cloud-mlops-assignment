@@ -1,0 +1,5 @@
+START RequestId: 2505fcb1-60c1-4793-b1d2-3f1cfb5ce799 Version: $LATEST
+[WARNING]	2026-11-16T16:19:38.176Z	2505fcb1-60c1-4793-b1d2-3f1cfb5ce799	입력 검증 실패: ["범위 오류: 'hum' = 1.5 — 허용 범위 [0.0, 1.0]"]
+END RequestId: 2505fcb1-60c1-4793-b1d2-3f1cfb5ce799
+REPORT RequestId: 2505fcb1-60c1-4793-b1d2-3f1cfb5ce799	Duration: 1.83 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 129 MB	
+

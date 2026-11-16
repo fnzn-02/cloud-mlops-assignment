@@ -1,0 +1,5 @@
+START RequestId: b06de6f2-f58c-4849-9cc4-9c7601eb111c Version: $LATEST
+[WARNING]	2026-11-16T16:19:37.807Z	b06de6f2-f58c-4849-9cc4-9c7601eb111c	입력 검증 실패: ['입력은 JSON 객체여야 함, 받은 타입: list']
+END RequestId: b06de6f2-f58c-4849-9cc4-9c7601eb111c
+REPORT RequestId: b06de6f2-f58c-4849-9cc4-9c7601eb111c	Duration: 1.74 ms	Billed Duration: 2 ms	Memory Size: 1024 MB	Max Memory Used: 129 MB	
+
