@@ -63,7 +63,7 @@ echo "모델 버전: $MODEL_VERSION / Git 커밋: $GIT_COMMIT / 이미지 태그
 
 # ── 1. S3 버킷 (모델 보관본과 호출 결과 저장용) ───────────────────────────────
 STEP="1/5 S3 버킷 확인·생성"; echo ""; echo "[$STEP]"
-if aws s3api head-bucket --bucket "$BUCKET" --region "$REGION" 2>/dev/null; then
+if aws s3api head-bucket --bucket "$BUCKET" --region "$REGION" >/dev/null 2>&1; then
   echo "버킷 이미 존재: $BUCKET"
 else
   aws s3api create-bucket --bucket "$BUCKET" --region "$REGION" \
@@ -102,7 +102,8 @@ docker build --platform linux/amd64 --provenance=false -f service/Dockerfile -t 
 STEP="4/5 이미지 내 MODEL_PATH 확인"
 docker run --rm --platform linux/amd64 --entrypoint test "${ECR_URI}:${IMAGE_TAG}" -f "$MODEL_PATH_IN_IMAGE" || {
   echo "MODEL_PATH($MODEL_PATH_IN_IMAGE)가 이미지 안에 없음 — 배포 중단"
-  docker run --rm --platform linux/amd64 --entrypoint find "${ECR_URI}:${IMAGE_TAG}" /var/task -name "*.joblib"
+  echo "이미지 안의 /var/task 내용:"
+  docker run --rm --platform linux/amd64 --entrypoint ls "${ECR_URI}:${IMAGE_TAG}" -R /var/task | grep -v "^$" || true
   false; }
 echo "이미지 내 모델 확인: $MODEL_PATH_IN_IMAGE"
 STEP="4/5 이미지 push"

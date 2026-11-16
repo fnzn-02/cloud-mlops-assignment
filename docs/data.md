@@ -67,7 +67,9 @@ UCI 데이터셋 설명서(Readme.txt)에는 `1=봄, 2=여름, 3=가을, 4=겨�
 
 - **종류**: `sklearn.ensemble.RandomForestRegressor`
 - **하이퍼파라미터**: `n_estimators=200`, `random_state=42`, `n_jobs=-1`
-- **버전(SHA256[:12])**: `f9a91eb09c39` (scikit-learn 1.7.2, Python 3.14)
+- **저장**: `joblib` 압축 수준 3 (`config.yaml`의 `model.save_compress`), 약 26MB
+  - 압축 없이 저장하면 148MB여서 Lambda 콜드 스타트 타임아웃이 발생했다 (`docs/incident.md` 오류 2)
+- **버전(SHA256[:12])**: `0e16c92e1dd6` (scikit-learn 1.7.2, Python 3.14)
 
 ## 평가 결과
 
