@@ -38,14 +38,14 @@
 - **AWS 계정**: 학교 계정 (일반 AWS, Learner Lab 아님)
 - **AWS 리전**: `ap-northeast-2` (서울)
 - **GitHub**: https://github.com/fnzn-02/cloud-mlops-assignment (Public, main 브랜치)
-- **IAM 사용자**: `2022100185`
+- **IAM 사용자**: `<학번>`
 
 ## 4. AWS 구성 (최종)
 ```
 [로컬] make all → data/model.joblib (버전 = SHA256 앞 12자리)
    │ make deploy
-   ├─→ [S3] s3://bike-demand-2022100185/models/<버전>/model.joblib (보관본)
-   └─→ [ECR] 모델 포함 이미지 → [Lambda] bike-demand-2022100185 (MODEL_PATH=/var/task/model/model.joblib)
+   ├─→ [S3] s3://bike-demand-<학번>/models/<버전>/model.joblib (보관본)
+   └─→ [ECR] 모델 포함 이미지 → [Lambda] bike-demand-<학번> (MODEL_PATH=/var/task/model/model.joblib)
 [로컬] make invoke → 실제 호출 → runs/ + s3://.../runs/
 ```
 - Lambda: Python 3.14 컨테이너, x86_64, 1024MB, 30초, 실행 역할 `yeonsung-lambda-basic-role`(학교 제공)
